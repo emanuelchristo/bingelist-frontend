@@ -1,0 +1,43 @@
+.list-item {
+	border-radius: var(--radius-md);
+	padding: var(--spacing-sm);
+	display: flex;
+	align-items: center;
+	gap: var(--spacing-md);
+}
+
+.list-item:hover {
+	background: var(--light-bg);
+}
+
+.list-item:active {
+	background: var(--light-bg-active);
+}
+
+.emoji-wrapper {
+	width: 48px;
+	height: 48px;
+	background: var(--light-bg);
+	border-radius: var(--radius-sm);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.emoji-wrapper span {
+	font-size: 19px;
+}
+
+.text-wrapper {
+	display: flex;
+	flex-direction: column;
+}
+
+.name {
+	font-size: var(--font-size-lg);
+}
+
+.count {
+	font-size: var(--font-size-sm);
+	color: var(--text-light);
+}

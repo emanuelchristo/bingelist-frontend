@@ -1,0 +1,51 @@
+:root {
+	/* COLORS */
+	--app-bg: #040404;
+	--card-bg: radial-gradient(659.35% 100% at 50% 100%, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.04) 100%);
+	--light-bg: radial-gradient(53.03% 100% at 50% 100%, rgba(255, 255, 255, 0.12) 0%, rgba(255, 255, 255, 0.08) 100%);
+	--light-bg-active: radial-gradient(
+		53.03% 100% at 50% 100%,
+		rgba(255, 255, 255, 0.2) 0%,
+		rgba(255, 255, 255, 0.09) 100%
+	);
+	--text-bright: rgba(255, 255, 255, 0.96);
+	--text-light: rgba(255, 255, 255, 0.4);
+	--text-lighter: rgba(255, 255, 255, 0.2);
+	--text-dark: #000;
+	/* --card-border: linear-gradient(
+		180deg,
+		rgba(255, 255, 255, 0.12) 0%,
+		rgba(255, 255, 255, 0.1) 100%,
+		rgba(255, 255, 255, 0.08) 100%
+	); */
+	--red: #f20e45;
+	--green: #0dcc70;
+
+	/* BORDER */
+	--card-border: 1.2px solid rgba(255, 255, 255, 0.1);
+
+	/* BORDER RADIUS */
+	--radius-lg: 20px;
+	--radius-md: 14px;
+	--radius-sm: 10px;
+
+	/* FONT SIZE */
+	--font-size-sm: 12px;
+	--font-size-md: 13px;
+	--font-size-lg: 14px;
+	--font-size-xl: 16px;
+
+	/* ICON SIZE */
+	--icon-size-sm: 16px;
+	--icon-size-md: 20px;
+	--icon-size-lg: 24px;
+
+	/* SPACING */
+	--spacing-sm: 8px;
+	--spacing-md: 12px;
+	--spacing-lg: 16px;
+
+	/* FONT WEIGHT */
+	--font-weight-semibold: 600;
+	--font-weight-medium: 400;
+}

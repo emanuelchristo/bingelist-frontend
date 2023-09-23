@@ -1,0 +1,23 @@
+.dashboard-page {
+	display: flex;
+	height: 100%;
+	gap: var(--spacing-sm);
+	padding: var(--spacing-sm);
+}
+
+.left-section,
+.right-section,
+.center-section {
+	display: flex;
+	flex-direction: column;
+	gap: var(--spacing-sm);
+}
+
+.left-section,
+.right-section {
+	width: 280px;
+}
+
+.center-section {
+	flex: 1;
+}

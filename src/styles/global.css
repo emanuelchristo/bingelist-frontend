@@ -1,0 +1,39 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html,
+body,
+#root {
+	overflow-x: hidden;
+	background: var(--app-bg);
+	height: 100vh;
+	color: var(--text-bright);
+	font-weight: var(--font-weight-medium);
+	box-sizing: border-box;
+	user-select: none;
+}
+
+* {
+	cursor: auto !important;
+}
+
+.card {
+	border-radius: var(--radius-lg);
+	background: var(--card-bg);
+	display: flex;
+	overflow: hidden;
+	position: relative;
+}
+
+.card::before {
+	content: '';
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	border-radius: var(--radius-lg);
+	border: var(--card-border);
+	pointer-events: none;
+}

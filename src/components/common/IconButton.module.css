@@ -1,0 +1,21 @@
+.icon-button {
+	width: 32px;
+	height: 32px;
+	border-radius: 50%;
+	background: var(--light-bg);
+	display: grid;
+	place-content: center;
+}
+
+.icon-button:active {
+	background: var(--light-bg-active);
+}
+
+.icon-button svg {
+	width: var(--icon-size-md);
+	height: var(--icon-size-md);
+}
+
+.icon-button svg path {
+	fill: var(--text-bright);
+}

@@ -1,0 +1,51 @@
+.navbar {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	height: 58px;
+	padding: 0 var(--spacing-lg);
+}
+
+.nav-items-wrapper {
+	display: flex;
+	align-items: center;
+	gap: 24px;
+}
+
+.nav-item {
+	display: flex;
+	align-items: center;
+	gap: var(--spacing-sm);
+	color: var(--text-lighter);
+	font-weight: var(--font-weight-semibold);
+}
+
+.nav-item svg {
+	width: var(--icon-size-lg);
+	height: var(--icon-size-lg);
+}
+
+.nav-item svg path {
+	fill: var(--text-lighter);
+}
+
+.selected {
+	color: var(--text-bright);
+}
+
+.selected svg path {
+	fill: var(--text-bright);
+}
+
+.avatar {
+	width: 36px;
+	height: 36px;
+	border-radius: 50%;
+	display: grid;
+	place-content: center;
+	background: linear-gradient(180deg, #821ee5 0%, #20007b 100%);
+}
+
+.avatar-initials {
+	font-size: var(--font-size-lg);
+}
