@@ -1,0 +1,146 @@
+/* BUTTON */
+
+.button {
+	height: var(--input-height);
+	border-radius: var(--radius-sm);
+	background: var(--text-bright);
+	color: var(--text-dark);
+	width: 100%;
+	font-size: var(--font-size-lg);
+	font-weight: var(--font-weight-semibold);
+}
+
+.primary:active {
+	background: var(--text-bright-active);
+}
+
+.secondary {
+	background: var(--light-bg);
+	color: var(--text-bright);
+	font-weight: var(--font-weight-medium);
+}
+
+.secondary:active {
+	background: var(--light-bg-active);
+}
+
+/* COMMON */
+.label {
+	font-size: var(--font-size-md);
+	font-weight: var(--font-weight-semibold);
+	margin-bottom: var(--spacing-sm);
+	margin-left: 2px;
+	display: inline-block;
+}
+
+/* SELECT */
+
+.select {
+	display: flex;
+	align-items: center;
+	height: var(--input-height);
+	border-radius: var(--radius-sm);
+	background: var(--light-bg);
+	overflow: hidden;
+	padding: 0 var(--spacing-md);
+}
+
+.select:active {
+	background: var(--light-bg-active);
+}
+
+.icon-wrapper {
+	padding-right: var(--spacing-md);
+	height: 100%;
+	display: grid;
+	place-content: center;
+}
+
+.icon-wrapper svg {
+	width: var(--icon-size-md);
+	height: var(--icon-size-md);
+}
+
+.icon-wrapper svg path {
+	fill: var(--text-bright);
+}
+
+.select select {
+	background: none;
+	height: 100%;
+	font-size: var(--font-size-md);
+	flex: 1;
+	outline: none;
+	-webkit-appearance: none;
+	-moz-appearance: none;
+}
+
+.select-chevron-wrapper {
+	display: grid;
+	place-content: center;
+}
+
+.select-chevron-wrapper svg {
+	width: var(--icon-size-lg);
+	height: var(--icon-size-lg);
+}
+
+.select-chevron-wrapper svg path {
+	fill: var(--text-bright);
+}
+
+/* CHIP */
+.chip {
+	height: 30px;
+	padding: var(--spacing-md);
+	border-radius: var(--radius-xs);
+	background: var(--light-bg);
+	display: grid;
+	place-content: center;
+	font-size: var(--font-size-sm);
+}
+
+.chip:active {
+	background: var(--light-bg-active);
+}
+
+.chip-selected {
+	font-weight: var(--font-weight-semibold);
+	color: var(--text-dark);
+	background: var(--text-bright);
+}
+
+.chip-selected:active {
+	background: var(--text-bright-active);
+}
+
+/* TOGGLE */
+
+.toggle {
+	height: 26px;
+	width: 38px;
+	border-radius: 100px;
+	background: var(--light-bg);
+	position: relative;
+	transition: 0.2s ease all;
+}
+
+.toggle-circle {
+	width: 22px;
+	height: 22px;
+	border-radius: 50%;
+	background: var(--text-bright);
+	position: absolute;
+	top: 50%;
+	transform: translateY(-50%);
+	left: 2px;
+	transition: 0.2s ease all;
+}
+
+.toggle-checked {
+	background: #128843;
+}
+
+.toggle-checked .toggle-circle {
+	left: 14px;
+}

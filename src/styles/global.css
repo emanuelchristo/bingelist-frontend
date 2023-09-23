@@ -10,6 +10,7 @@ body,
 	height: 100vh;
 	color: var(--text-bright);
 	font-weight: var(--font-weight-medium);
+	font-size: var(--font-size-md);
 	box-sizing: border-box;
 	user-select: none;
 }
