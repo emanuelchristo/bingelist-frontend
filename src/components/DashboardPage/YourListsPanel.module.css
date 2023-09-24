@@ -33,3 +33,7 @@
 	padding: 0 var(--spacing-sm);
 	overflow-y: scroll;
 }
+
+.lists-wrapper {
+	padding-bottom: 64px;
+}

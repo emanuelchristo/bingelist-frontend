@@ -42,7 +42,8 @@
 	border-radius: var(--radius-sm);
 	background: var(--light-bg);
 	overflow: hidden;
-	padding: 0 var(--spacing-md);
+	padding: 0 var(--spacing-sm);
+	padding-left: var(--spacing-md);
 }
 
 .select:active {
@@ -65,7 +66,8 @@
 	fill: var(--text-bright);
 }
 
-.select select {
+.select select,
+.select input {
 	background: none;
 	height: 100%;
 	font-size: var(--font-size-md);
@@ -73,6 +75,10 @@
 	outline: none;
 	-webkit-appearance: none;
 	-moz-appearance: none;
+}
+
+.select input::placeholder {
+	color: var(--text-lighter);
 }
 
 .select-chevron-wrapper {

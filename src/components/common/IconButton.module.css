@@ -19,3 +19,9 @@
 .icon-button svg path {
 	fill: var(--text-bright);
 }
+
+.lg {
+	width: var(--input-height);
+	height: var(--input-height);
+}
+
