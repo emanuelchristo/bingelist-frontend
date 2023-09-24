@@ -1,4 +1,5 @@
-import { useState } from 'react'
+import { observer } from 'mobx-react-lite'
+import { dashboardStore } from '../../store/stores'
 
 import FilterSvg from '/src/assets/icons/filter.svg?react'
 import SortSvg from '/src/assets/icons/sort.svg?react'
@@ -14,50 +15,7 @@ import Chip from '../common/Chip'
 import styles from './FiltersPanel.module.css'
 import Toggle from '../common/Toggle'
 
-const genres = [
-	'Action',
-	'Adventure',
-	'Animation',
-	'Comedy',
-	'Crime',
-	'Documentary',
-	'Drama',
-	'Family',
-	'Fantasy',
-	'History',
-	'Horror',
-	'Music',
-	'Mystery',
-	'Romance',
-	'Sci Fi',
-	'TV Movie',
-	'Thriller',
-	'War',
-	'Western',
-]
-
-function genYearOptions() {
-	const options = []
-	const currYear = new Date().getFullYear()
-	for (let i = 1950; i <= currYear; i++) options.push({ value: i, name: i })
-	return options
-}
-
-function genImdbOptions() {
-	const options = []
-	for (let i = 0; i <= 10; i++) options.push({ value: i, name: i })
-	return options
-}
-
-function genRtOptions() {
-	const options = []
-	for (let i = 0; i <= 100; i = i + 10) options.push({ value: i, name: i + '%' })
-	return options
-}
-
-export default function FiltersPanel() {
-	const [fitlersActive, setFiltersActive] = useState(false)
-
+const FiltersPanel = observer(() => {
 	return (
 		<div className={styles['filters-panel'] + ' card'}>
 			<div className={styles['header']}>
@@ -65,38 +23,50 @@ export default function FiltersPanel() {
 					<FilterSvg className={styles['filter-icon']} />
 					<span className={styles['title']}>Filters</span>
 				</div>
-				<Toggle checked={fitlersActive} onChange={() => setFiltersActive((val) => !val)} />
+				<Toggle checked={dashboardStore.filtersActive} onChange={dashboardStore.toggleFiltersActive} />
 			</div>
 
-			<div className={styles['inputs-container']}>
+			<div
+				className={`${styles['inputs-container']} ${
+					!dashboardStore.filtersActive ? styles['filters-disabled'] : ''
+				}`}
+			>
 				<div className={styles['inputs-wrapper']}>
 					{/* SORT */}
 					<Select
 						icon={<SortSvg />}
 						label='Sort'
-						options={[
-							{ value: 'popularity', name: 'Popularity' },
-							{ value: 'latest', name: 'Latest' },
-						]}
-						selected={'popularity'}
+						options={dashboardStore.filterSettings.sortOptions}
+						selected={dashboardStore.filters.sort}
+						onChange={(e) => dashboardStore.handleFilterChange('sort', e.target.value)}
 					/>
 
 					{/* TYPE */}
 					<div>
 						<span className={styles['label']}>Type</span>
 						<div className={styles['chips-wrapper']}>
-							<Chip name='All' selected={false} />
-							<Chip name='Movies' selected={true} />
-							<Chip name='TV Shows' selected={false} />
+							{dashboardStore.filterSettings.type.map((item) => (
+								<Chip
+									key={item.value}
+									name={item.name}
+									selected={dashboardStore.filters.type === item.value}
+									onClick={() => dashboardStore.handleFilterChange('type', item.value)}
+								/>
+							))}
 						</div>
 					</div>
 
 					{/* GENRE */}
 					<div>
-						<span className={styles['label']}>Type</span>
+						<span className={styles['label']}>Genre</span>
 						<div className={styles['chips-wrapper']}>
-							{genres.map((item) => (
-								<Chip key={item} name={item} selected={false} />
+							{dashboardStore.filterSettings.genres.map((item) => (
+								<Chip
+									key={item.value}
+									name={item.name}
+									selected={dashboardStore.filters.genres.includes(item.value)}
+									onClick={() => dashboardStore.handleFilterChange('genres', item.value)}
+								/>
 							))}
 						</div>
 					</div>
@@ -107,11 +77,19 @@ export default function FiltersPanel() {
 						<div className={styles['year-selects-wrapper']}>
 							<div className={styles['year-select-wrapper']}>
 								<span>From</span>
-								<Select options={genYearOptions()} selected={1990} />
+								<Select
+									options={dashboardStore.filterSettings.yearOptions}
+									selected={dashboardStore.filters.year.from}
+									onChange={(e) => dashboardStore.handleFilterChange('year-from', e.target.value)}
+								/>
 							</div>
 							<div className={styles['year-select-wrapper']}>
 								<span>To</span>
-								<Select options={genYearOptions()} selected={2022} />
+								<Select
+									options={dashboardStore.filterSettings.yearOptions}
+									selected={dashboardStore.filters.year.to}
+									onChange={(e) => dashboardStore.handleFilterChange('year-to', e.target.value)}
+								/>
 							</div>
 						</div>
 					</div>
@@ -123,7 +101,11 @@ export default function FiltersPanel() {
 							<img src={ImdbSvg} />
 						</div>
 						<div className={styles['rating-select-wrapper']}>
-							<Select options={genImdbOptions()} selected={4} />
+							<Select
+								options={dashboardStore.filterSettings.imdbOptions}
+								selected={dashboardStore.filters.minImdb}
+								onChange={(e) => dashboardStore.handleFilterChange('minImdb', e.target.value)}
+							/>
 						</div>
 					</div>
 
@@ -134,7 +116,11 @@ export default function FiltersPanel() {
 							<img src={RTSvg} />
 						</div>
 						<div className={styles['rating-select-wrapper']}>
-							<Select options={genRtOptions()} selected={40} />
+							<Select
+								options={dashboardStore.filterSettings.rtOptions}
+								selected={dashboardStore.filters.minRt}
+								onChange={(e) => dashboardStore.handleFilterChange('minRt', e.target.value)}
+							/>
 						</div>
 					</div>
 
@@ -142,36 +128,46 @@ export default function FiltersPanel() {
 					<Select
 						icon={<LanguageSvg />}
 						label='Language'
-						options={[
-							{ value: 'english', name: 'English' },
-							{ value: 'hindi', name: 'Hindi' },
-						]}
-						selected={'english'}
+						options={dashboardStore.filterSettings.languageOptions}
+						selected={dashboardStore.filters.language}
+						onChange={(e) => dashboardStore.handleFilterChange('language', e.target.value)}
 					/>
 
 					{/* DURATION */}
 					<Select
 						icon={<TimerSvg />}
 						label='Duration'
-						options={[
-							{ value: 'under-2hr', name: 'Under 2hr' },
-							{ value: 'under-3hr', name: 'Under 3hr' },
-						]}
-						selected={'under-2hr'}
+						options={dashboardStore.filterSettings.durationOptions}
+						selected={dashboardStore.filters.duration}
+						onChange={(e) => dashboardStore.handleFilterChange('duration', e.target.value)}
 					/>
 
 					{/* 18+ */}
 					<div className={styles['adult']}>
 						<span>Include 18+</span>
-						<Toggle />
+						<Toggle
+							checked={dashboardStore.filters.adult}
+							onChange={() => dashboardStore.handleFilterChange('adult')}
+						/>
 					</div>
 				</div>
 			</div>
 
-			<div className={styles['bottom-wrapper']}>
-				<Button type='secondary' name='Reset' />
-				<Button type='primary' name='Apply' />
+			<div
+				className={`${styles['bottom-wrapper']} ${
+					!dashboardStore.filtersActive ? styles['filters-disabled'] : ''
+				}`}
+			>
+				<Button type='secondary' name='Reset' onClick={dashboardStore.resetFilter} />
+				<Button
+					type='primary'
+					name='Apply'
+					onClick={dashboardStore.applyFilters}
+					disabled={!dashboardStore.filtersChanged}
+				/>
 			</div>
 		</div>
 	)
-}
+})
+
+export default FiltersPanel

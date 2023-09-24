@@ -111,3 +111,9 @@
 .adult span {
 	font-weight: var(--font-weight-semibold);
 }
+
+.filters-disabled {
+	opacity: 0.2;
+	overflow: hidden;
+	pointer-events: none;
+}

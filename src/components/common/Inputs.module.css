@@ -10,6 +10,10 @@
 	font-weight: var(--font-weight-semibold);
 }
 
+.button:disabled {
+	opacity: var(--disabled-opacity);
+}
+
 .primary:active {
 	background: var(--text-bright-active);
 }
@@ -111,7 +115,7 @@
 }
 
 .chip-selected {
-	font-weight: var(--font-weight-semibold);
+	/* font-weight: var(--font-weight-semibold); */
 	color: var(--text-dark);
 	background: var(--text-bright);
 }

@@ -22,6 +22,8 @@
 	--red: #f20e45;
 	--green: #0dcc70;
 
+	--disabled-opacity: 0.5;
+
 	/* BORDER */
 	--card-border: 1.2px solid rgba(255, 255, 255, 0.1);
 
