@@ -1,4 +1,5 @@
-import { useState } from 'react'
+import { observer } from 'mobx-react-lite'
+import { dashboardStore } from '../../store/stores'
 
 import DiscoverSvg from '/src/assets/icons/discover.svg?react'
 import ShuffleSvg from '/src/assets/icons/shuffle.svg?react'
@@ -7,9 +8,7 @@ import SearchSvg from '/src/assets/icons/search.svg?react'
 
 import styles from './Navbar.module.css'
 
-export default function Navbar() {
-	const [selectedTab, setSelectedTab] = useState(null)
-
+const Navbar = observer(() => {
 	const navOptions = [
 		{ id: 'discover', name: 'Discover', icon: <DiscoverSvg /> },
 		{ id: 'search', name: 'Search', icon: <SearchSvg /> },
@@ -25,8 +24,8 @@ export default function Navbar() {
 						key={item.id}
 						name={item.name}
 						icon={item.icon}
-						selected={selectedTab === item.id}
-						onClick={() => setSelectedTab(item.id)}
+						selected={dashboardStore.selectedTabId === item.id}
+						onClick={() => dashboardStore.handleTabClick(item.id)}
 					/>
 				))}
 			</div>
@@ -35,7 +34,9 @@ export default function Navbar() {
 			</div>
 		</div>
 	)
-}
+})
+
+export default Navbar
 
 function NavItem({ icon, name, selected, onClick }) {
 	return (

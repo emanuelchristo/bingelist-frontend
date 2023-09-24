@@ -2,9 +2,9 @@ import ChevronDownSvg from '/src/assets/icons/chevron-down.svg?react'
 
 import styles from './Inputs.module.css'
 
-export default function Select({ icon, options, label, selected, onChange }) {
+export default function Select({ icon, options, label, selected, onChange = () => {} }) {
 	return (
-		<div>
+		<div className='w-full'>
 			{!!label && <span className={styles['label']}>{label}</span>}
 			<div className={styles['select']} aria-label='select'>
 				{!!icon && <div className={styles['icon-wrapper']}>{icon}</div>}

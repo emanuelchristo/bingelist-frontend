@@ -14,6 +14,10 @@
 	background: var(--light-bg-active);
 }
 
+.selected {
+	background: var(--light-bg);
+}
+
 .emoji-wrapper {
 	width: 48px;
 	height: 48px;

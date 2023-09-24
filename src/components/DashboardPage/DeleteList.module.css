@@ -1,0 +1,33 @@
+.delete-list {
+	width: 350px;
+	display: flex;
+	flex-direction: column;
+	background: var(--app-bg) var(--card-bg) !important;
+}
+
+.header {
+	display: flex;
+	align-items: center;
+	height: 52px;
+	padding-left: 16px;
+	padding-right: 12px;
+	justify-content: space-between;
+	border-bottom: var(--card-border);
+}
+
+.title {
+	font-size: var(--font-size-xl);
+	font-weight: var(--font-weight-semibold);
+}
+
+.buttons-wrapper {
+	display: flex;
+	align-items: center;
+	gap: var(--spacing-sm);
+	padding: var(--spacing-lg) var(--spacing-md);
+	border-top: var(--card-border);
+}
+
+.content {
+	height: 100px;
+}

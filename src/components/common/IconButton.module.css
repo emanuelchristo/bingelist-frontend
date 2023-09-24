@@ -5,6 +5,7 @@
 	background: var(--light-bg);
 	display: grid;
 	place-content: center;
+	flex-shrink: 0;
 }
 
 .icon-button:active {
@@ -24,4 +25,3 @@
 	width: var(--input-height);
 	height: var(--input-height);
 }
-
