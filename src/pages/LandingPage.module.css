@@ -1,0 +1,70 @@
+.landing-page {
+	min-height: 100vh;
+	display: flex;
+	flex-direction: column;
+}
+
+.nav {
+	height: 72px;
+	border-bottom: var(--card-border);
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding: 0 20px;
+}
+
+.nav-button-wrapper {
+	width: 100px;
+	flex-shrink: 0;
+}
+
+.logo {
+	height: 35px;
+}
+
+.hero {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	flex: 1;
+	background: radial-gradient(
+		128.45% 52.58% at -12.33% 112.08%,
+		rgba(207, 255, 15, 0.9) 31.25%,
+		rgba(49, 218, 255, 0.77) 67.71%,
+		rgba(30, 73, 224, 0) 100%
+	);
+}
+
+.hero-content {
+	max-width: 1300px;
+	padding: 0 60px;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 70px;
+	height: 100%;
+	width: 100%;
+}
+
+.main-heading {
+	font-size: 108px;
+	font-weight: var(--font-weight-bold);
+	letter-spacing: -6px;
+	line-height: 1;
+}
+
+.sub-heading {
+	font-size: 26px;
+	font-weight: var(--font-weight-medium);
+	color: rgba(255, 255, 255, 0.6);
+	margin-top: 20px;
+	margin-bottom: 24px;
+}
+
+.hero-button-wrapper {
+	max-width: 200px;
+}
+
+.hero-image {
+	width: 550px;
+}

@@ -6,6 +6,7 @@ import SearchSvg from '/src/assets/icons/search.svg?react'
 import IconButton from '../common/IconButton'
 import TextBox from '../common/TextBox'
 import MovieGridItem from '../common/MovieGridItem'
+import MovieGrid from '../common/MovieGrid'
 
 import styles from './ListPanel.module.css'
 
@@ -29,14 +30,12 @@ export default function ListPanel() {
 					<IconButton icon={<AddSvg />} size='lg' />
 				</div>
 			</div>
-			<div className={styles['grid-container']}>
-				<div className={styles['grid']}>
-					<MovieGridItem />
-					<MovieGridItem />
-					<MovieGridItem />
-					<MovieGridItem />
-				</div>
-			</div>
+			<MovieGrid>
+				<MovieGridItem />
+				<MovieGridItem />
+				<MovieGridItem />
+				<MovieGridItem />
+			</MovieGrid>
 		</div>
 	)
 }

@@ -54,16 +54,3 @@
 	align-items: center;
 	gap: var(--spacing-sm);
 }
-
-.grid-container {
-	overflow-y: scroll;
-	padding: 0 var(--spacing-sm);
-	border-radius: var(--radius-lg);
-}
-
-.grid {
-	display: grid;
-	grid-template-columns: repeat(5, 1fr);
-	gap: var(--spacing-lg) var(--spacing-sm);
-	padding-bottom: 64px;
-}
