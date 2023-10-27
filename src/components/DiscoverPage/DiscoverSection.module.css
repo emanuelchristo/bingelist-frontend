@@ -1,0 +1,40 @@
+.discover-section {
+	padding: 8px 0;
+}
+
+.section-header {
+	display: flex;
+	align-items: center;
+	padding: 0 24px;
+	height: 72px;
+	gap: 24px;
+}
+
+.section-title {
+	font-size: 24px;
+	font-weight: var(--font-weight-semibold);
+}
+
+.tabs {
+	display: flex;
+	align-items: center;
+	border: var(--card-border);
+	border-radius: 100px;
+}
+
+.tab-item {
+	padding: 10px 16px;
+	line-height: 1;
+	font-size: var(--font-size-sm);
+	border-radius: 100px;
+}
+
+.tab-selected {
+	color: var(--text-dark);
+	background-color: var(--text-bright);
+	box-shadow: var(--shadow-glow);
+}
+
+.movies-wrapper {
+	padding: 0 8px;
+}

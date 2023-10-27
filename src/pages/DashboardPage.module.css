@@ -9,13 +9,16 @@
 .right-section,
 .center-section {
 	display: flex;
+	flex: 1;
 	flex-direction: column;
 	gap: var(--spacing-sm);
+	flex-shrink: 0;
 }
 
 .left-section,
 .right-section {
 	width: 286px;
+	max-width: 320px;
 }
 
 .center-section {

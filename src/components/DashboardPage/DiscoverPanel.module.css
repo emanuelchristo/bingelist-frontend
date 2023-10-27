@@ -1,6 +1,9 @@
 .discover-panel {
-	width: 100%;
 	display: flex;
 	flex-direction: column;
 	flex: 1;
+}
+
+.discover-content {
+	overflow-y: scroll;
 }

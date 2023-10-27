@@ -4,9 +4,9 @@ import RtFresh from '/src/assets/logos/rt-fresh.svg'
 
 import styles from './MovieGridItem.module.css'
 
-const MovieGridItem = observer(() => {
+const MovieGridItem = observer(({ width }) => {
 	return (
-		<div className={styles['movie-grid-item']} onClick={() => dashboardStore.handleMovieClick('movieId')}>
+		<div className={styles['movie-grid-item']} onClick={() => dashboardStore.handleMovieClick('movieId')} style={{ width: width }}>
 			<div className={styles['poster']}></div>
 			<div className={styles['content']}>
 				{/* <div className={styles['controls']}>

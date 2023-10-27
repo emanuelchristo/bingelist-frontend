@@ -26,7 +26,7 @@ export default function ListPanel() {
 				</div>
 				<div className={styles['controls-wrapper']}>
 					<TextBox icon={<SearchSvg />} placeholder='Search...' clear={true} onChange={() => {}} />
-					<IconButton icon={<GridSvg />} size='lg' />
+					{/* <IconButton icon={<GridSvg />} size='lg' /> */}
 					<IconButton icon={<AddSvg />} size='lg' />
 				</div>
 			</div>

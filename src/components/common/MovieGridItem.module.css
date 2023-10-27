@@ -6,6 +6,7 @@
 	overflow: hidden;
 	padding: var(--spacing-sm);
 	width: 100%;
+	flex-shrink: 0;
 }
 
 .movie-grid-item:hover {
@@ -82,4 +83,3 @@
 	height: 20px;
 	width: 20px;
 }
-

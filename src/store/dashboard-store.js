@@ -93,6 +93,9 @@ class DashboardStore {
 	showCreateList = false
 	showMovieModal = false
 
+	popularTab = 'movies'
+	upcomingTab = 'movies'
+
 	constructor() {
 		makeAutoObservable(this)
 	}
@@ -160,6 +163,15 @@ class DashboardStore {
 
 	cancelMovieModal = () => {
 		this.showMovieModal = false
+	}
+
+	// DISCOVER PAGE
+	handlePopularTabChange = (value) => {
+		this.popularTab = value
+	}
+
+	handleUpcomingTabChange = (value) => {
+		this.upcomingTab = value
 	}
 }
 

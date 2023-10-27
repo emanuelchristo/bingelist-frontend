@@ -7,6 +7,7 @@ body,
 #root {
 	overflow-x: hidden;
 	background: var(--app-bg);
+	width: 100vw;
 	height: 100vh;
 	color: var(--text-bright);
 	font-weight: var(--font-weight-medium);

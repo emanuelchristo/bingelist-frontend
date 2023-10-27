@@ -11,6 +11,8 @@
 	--text-dark: #000;
 	--image-bg: rgba(255, 255, 255, 0.07);
 
+	--shadow-glow: 0px 0px 25px 0px rgba(255, 255, 255, 0.2);
+
 	/* --card-border: linear-gradient(
 		180deg,
 		rgba(255, 255, 255, 0.12) 0%,
