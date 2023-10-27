@@ -1,10 +1,12 @@
+import { observer } from 'mobx-react-lite'
+import { dashboardStore } from '../../store/stores'
 import RtFresh from '/src/assets/logos/rt-fresh.svg'
 
 import styles from './MovieGridItem.module.css'
 
-export default function MovieGridItem() {
+const MovieGridItem = observer(() => {
 	return (
-		<div className={styles['movie-grid-item']}>
+		<div className={styles['movie-grid-item']} onClick={() => dashboardStore.handleMovieClick('movieId')}>
 			<div className={styles['poster']}></div>
 			<div className={styles['content']}>
 				{/* <div className={styles['controls']}>
@@ -23,4 +25,6 @@ export default function MovieGridItem() {
 			</div>
 		</div>
 	)
-}
+})
+
+export default MovieGridItem

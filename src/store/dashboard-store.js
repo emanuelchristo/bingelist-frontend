@@ -91,6 +91,7 @@ class DashboardStore {
 	appliedFilters = { ...defaultFilters }
 
 	showCreateList = false
+	showMovieModal = false
 
 	constructor() {
 		makeAutoObservable(this)
@@ -150,6 +151,15 @@ class DashboardStore {
 		const id = Math.floor(Math.random() * 1000000)
 		this.lists.push({ id: id, name: title, count: 9, emoji: emoji })
 		this.selectedListId = id
+	}
+
+	// MOVIE
+	handleMovieClick = (movieId) => {
+		this.showMovieModal = true
+	}
+
+	cancelMovieModal = () => {
+		this.showMovieModal = false
 	}
 }
 

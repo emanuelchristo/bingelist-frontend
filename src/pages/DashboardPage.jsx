@@ -6,13 +6,14 @@ import Navbar from '../components/DashboardPage/Navbar'
 import WaFaPanel from '../components/DashboardPage/WaFaPanel'
 import YourListsPanel from '../components/DashboardPage/YourListsPanel'
 import CreateList from '../components/DashboardPage/CreateList'
+import MovieModal from '../components/common/MovieModal'
 
 import styles from './DashboardPage.module.css'
 
 const DashboardPage = observer(() => {
 	function getModalComponent() {
 		if (dashboardStore.showCreateList) return <CreateList />
-
+		if (dashboardStore.showMovieModal) return <MovieModal />
 		return null
 	}
 
