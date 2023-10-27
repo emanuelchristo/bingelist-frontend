@@ -1,7 +1,6 @@
-.wa-fa-panel {
+.similar-panel {
 	width: 100%;
-	padding: var(--spacing-sm);
 	display: flex;
 	flex-direction: column;
-	gap: 2px;
+	flex: 1;
 }

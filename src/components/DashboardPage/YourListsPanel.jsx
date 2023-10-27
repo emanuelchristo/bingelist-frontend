@@ -1,12 +1,17 @@
 import { dashboardStore } from '../../store/stores'
 import { observer } from 'mobx-react-lite'
+import { useParams } from 'react-router-dom'
+
 import IconButton from '../common/IconButton'
 import ListItem from '../common/ListItem'
+
 import PlaySvg from '/src/assets/icons/play.svg?react'
 import AddSvg from '/src/assets/icons/add.svg?react'
 import styles from './YourListsPanel.module.css'
 
 const YourListsPanel = observer(() => {
+	const { listId } = useParams()
+
 	function sortList(list) {
 		const temp = list.filter(() => 1)
 		temp.sort((a, b) => a.name.localeCompare(b.name))
@@ -25,14 +30,7 @@ const YourListsPanel = observer(() => {
 			<div className={styles['lists-container']}>
 				<div className={styles['lists-wrapper']}>
 					{sortList(dashboardStore.lists).map((item, index) => (
-						<ListItem
-							key={index}
-							emoji={item.emoji}
-							name={item.name}
-							count={item.count}
-							selected={dashboardStore.selectedListId === item.id}
-							onClick={() => dashboardStore.handleListItemClick(item.id)}
-						/>
+						<ListItem key={index} emoji={item.emoji} name={item.name} count={item.count} id={item.id} selected={listId == item.id} />
 					))}
 				</div>
 			</div>

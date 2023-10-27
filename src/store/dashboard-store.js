@@ -90,19 +90,10 @@ class DashboardStore {
 	filtersChanged = false
 	appliedFilters = { ...defaultFilters }
 
-	selectedListId = null
-	selectedTabId = null
-
 	showCreateList = false
 
 	constructor() {
 		makeAutoObservable(this)
-	}
-
-	// COMMON
-	resetSelected = () => {
-		this.selectedListId = null
-		this.selectedTabId = null
 	}
 
 	// FILTERS
@@ -140,15 +131,8 @@ class DashboardStore {
 		this.appliedFilters = { ...defaultFilters }
 	}
 
-	// TABS
-	handleTabClick = (tabId) => {
-		this.resetSelected()
-		this.selectedTabId = tabId
-	}
-
 	// LISTS
 	handleListItemClick = (listId) => {
-		this.resetSelected()
 		this.selectedListId = listId
 	}
 

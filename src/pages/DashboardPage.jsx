@@ -1,7 +1,7 @@
 import { observer } from 'mobx-react-lite'
 import { dashboardStore } from '../store/stores'
+import { Outlet } from 'react-router-dom'
 import FiltersPanel from '../components/DashboardPage/FiltersPanel'
-import ListPanel from '../components/DashboardPage/ListPanel'
 import Navbar from '../components/DashboardPage/Navbar'
 import WaFaPanel from '../components/DashboardPage/WaFaPanel'
 import YourListsPanel from '../components/DashboardPage/YourListsPanel'
@@ -24,16 +24,12 @@ const DashboardPage = observer(() => {
 			</div>
 			<div className={styles['center-section']}>
 				<Navbar />
-				<ListPanel />
+				<Outlet />
 			</div>
 			<div className={styles['right-section']}>
 				<FiltersPanel />
 			</div>
-			<div
-				className={`${styles['modal-container']} ${getModalComponent() ? styles['show-modal-container'] : ''}`}
-			>
-				{getModalComponent()}
-			</div>
+			<div className={`${styles['modal-container']} ${getModalComponent() ? styles['show-modal-container'] : ''}`}>{getModalComponent()}</div>
 		</div>
 	)
 })

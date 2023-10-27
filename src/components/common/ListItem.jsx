@@ -1,8 +1,9 @@
 import { useRef, useEffect, useState } from 'react'
+import { Link } from 'react-router-dom'
 
 import styles from './ListItem.module.css'
 
-export default function ListItem({ emoji, name, count, selected, onClick }) {
+export default function ListItem({ emoji, name, count, selected, id, onClick }) {
 	const itemRef = useRef()
 
 	const [clicked, setClicked] = useState(false)
@@ -17,21 +18,23 @@ export default function ListItem({ emoji, name, count, selected, onClick }) {
 	}, [selected])
 
 	return (
-		<div
-			className={`${styles['list-item']} ${selected ? styles['selected'] : ''}`}
-			onClick={() => {
-				setClicked(true)
-				onClick()
-			}}
-			ref={itemRef}
-		>
-			<div className={styles['emoji-wrapper']}>
-				<span>{emoji}</span>
+		<Link to={`/dashboard/list/${id}`}>
+			<div
+				className={`${styles['list-item']} ${selected ? styles['selected'] : ''}`}
+				onClick={() => {
+					setClicked(true)
+					onClick()
+				}}
+				ref={itemRef}
+			>
+				<div className={styles['emoji-wrapper']}>
+					<span>{emoji}</span>
+				</div>
+				<div className={styles['text-wrapper']}>
+					<span className={styles['name']}>{name}</span>
+					<span className={styles['count']}>{count + `${count === 1 ? ' item' : ' items'}`}</span>
+				</div>
 			</div>
-			<div className={styles['text-wrapper']}>
-				<span className={styles['name']}>{name}</span>
-				<span className={styles['count']}>{count + `${count === 1 ? ' item' : ' items'}`}</span>
-			</div>
-		</div>
+		</Link>
 	)
 }
