@@ -92,12 +92,21 @@ class DashboardStore {
 
 	showCreateList = false
 	showMovieModal = false
+	showAddToListModal = false
+
+	addToListMovieId = null
 
 	popularTab = 'movies'
 	upcomingTab = 'movies'
 
 	constructor() {
 		makeAutoObservable(this)
+	}
+
+	getLists = () => {
+		const temp = this.lists.filter(() => 1)
+		temp.sort((a, b) => a.name.localeCompare(b.name))
+		return temp
 	}
 
 	// FILTERS
@@ -163,6 +172,18 @@ class DashboardStore {
 
 	cancelMovieModal = () => {
 		this.showMovieModal = false
+	}
+
+	handleAddToListClick = (movieId) => {
+		this.showAddToListModal = true
+		this.addToListMovieId = movieId
+	}
+
+	handleAddToListOk = (movieId, listIds) => {}
+
+	handleAddToListCancel = () => {
+		this.addToListMovieId = null
+		this.showAddToListModal = false
 	}
 
 	// DISCOVER PAGE

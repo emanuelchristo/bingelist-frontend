@@ -1,0 +1,19 @@
+.tabs {
+	display: flex;
+	align-items: center;
+	border: var(--card-border);
+	border-radius: 100px;
+}
+
+.tab-item {
+	padding: 10px 16px;
+	line-height: 1;
+	font-size: var(--font-size-sm);
+	border-radius: 100px;
+}
+
+.tab-selected {
+	color: var(--text-dark);
+	background-color: var(--text-bright);
+	box-shadow: var(--shadow-glow);
+}

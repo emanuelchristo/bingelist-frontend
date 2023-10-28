@@ -14,7 +14,15 @@
 	background: var(--light-bg-active);
 }
 
+.no-hover-anim:hover {
+	background: none;
+}
+
 .selected {
+	background: var(--light-bg);
+}
+
+.selected:hover {
 	background: var(--light-bg);
 }
 

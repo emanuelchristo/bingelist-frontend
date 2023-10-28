@@ -54,3 +54,13 @@
 	align-items: center;
 	gap: var(--spacing-sm);
 }
+
+.more-container {
+	position: relative;
+}
+
+.more-menu-wrapper {
+	position: absolute;
+	top: 38px;
+	z-index: 99;
+}
