@@ -8,6 +8,7 @@ import YourListsPanel from '../components/DashboardPage/YourListsPanel'
 import CreateList from '../components/DashboardPage/CreateList'
 import MovieModal from '../components/common/MovieModal'
 import AddToListModal from '../components/common/AddToListModal'
+import DeleteList from '../components/DashboardPage/DeleteList'
 
 import styles from './DashboardPage.module.css'
 
@@ -16,6 +17,7 @@ const DashboardPage = observer(() => {
 		if (dashboardStore.showCreateList) return <CreateList />
 		if (dashboardStore.showMovieModal) return <MovieModal />
 		if (dashboardStore.showAddToListModal) return <AddToListModal />
+		if (dashboardStore.showDeleteList) return <DeleteList />
 		return null
 	}
 

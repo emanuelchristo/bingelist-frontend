@@ -1,3 +1,5 @@
+import { useParams } from 'react-router-dom'
+import { dashboardStore } from '../../store/stores'
 import { useState } from 'react'
 
 // import GridSvg from '/src/assets/icons/grid.svg?react'
@@ -16,7 +18,14 @@ import ContextMenu from '../common/ContextMenu'
 import styles from './ListPanel.module.css'
 
 export default function ListPanel() {
+	const { listId } = useParams()
 	const [showMoreMenu, setShowMoreMenu] = useState(false)
+
+	function handleMenuClick(value) {
+		setShowMoreMenu(false)
+		if (value === 'delete') dashboardStore.deleteList(listId)
+		else if (value === 'edit') dashboardStore.editList(listId)
+	}
 
 	return (
 		<div className={styles['list-panel'] + ' card'}>
@@ -38,6 +47,7 @@ export default function ListPanel() {
 									{ icon: <EditSvg />, name: 'Edit', value: 'edit' },
 								]}
 								show={showMoreMenu}
+								onClick={handleMenuClick}
 								onClose={() => setShowMoreMenu(false)}
 							/>
 						</div>

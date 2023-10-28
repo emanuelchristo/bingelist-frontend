@@ -91,10 +91,13 @@ class DashboardStore {
 	appliedFilters = { ...defaultFilters }
 
 	showCreateList = false
+	showDeleteList = false
 	showMovieModal = false
 	showAddToListModal = false
 
+	deleteListId = null
 	addToListMovieId = null
+	editListId = null
 
 	popularTab = 'movies'
 	upcomingTab = 'movies'
@@ -107,6 +110,10 @@ class DashboardStore {
 		const temp = this.lists.filter(() => 1)
 		temp.sort((a, b) => a.name.localeCompare(b.name))
 		return temp
+	}
+
+	getListById = (listId) => {
+		return this.lists.find((item) => item.id == listId)
 	}
 
 	// FILTERS
@@ -163,6 +170,36 @@ class DashboardStore {
 		const id = Math.floor(Math.random() * 1000000)
 		this.lists.push({ id: id, name: title, count: 9, emoji: emoji })
 		this.selectedListId = id
+	}
+
+	editList = (listId) => {
+		this.showCreateList = true
+		this.editListId = listId
+	}
+
+	cancelEditList = () => {
+		this.showCreateList = false
+		this.editListId = null
+	}
+
+	okEditList = () => {
+		this.showCreateList = false
+		this.editListId = null
+	}
+
+	deleteList = (listId) => {
+		this.deleteListId = listId
+		this.showDeleteList = true
+	}
+
+	cancelDeleteList = () => {
+		this.deleteListId = null
+		this.showDeleteList = false
+	}
+
+	okDeleteList = () => {
+		this.deleteListId = null
+		this.showDeleteList = false
 	}
 
 	// MOVIE

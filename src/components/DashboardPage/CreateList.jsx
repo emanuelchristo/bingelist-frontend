@@ -1,3 +1,4 @@
+import { observer } from 'mobx-react-lite'
 import { useState } from 'react'
 import { dashboardStore } from '../../store/stores'
 import IconButton from '../common/IconButton'
@@ -9,18 +10,22 @@ import TextBox from '../common/TextBox'
 
 import styles from './CreateList.module.css'
 
-export default function CreateList() {
+const CreateList = observer(() => {
 	const [emoji, setEmoji] = useState('✏️')
 	const [title, setTitle] = useState('')
 
 	function handleCancel() {
-		dashboardStore.cancelCreateList()
+		if (dashboardStore.editListId) dashboardStore.cancelEditList()
+		else dashboardStore.cancelCreateList()
+
 		setEmoji('✏️')
 		setTitle('')
 	}
 
 	function handleOk() {
-		dashboardStore.okCreateList({ emoji, title })
+		if (dashboardStore.editListId) dashboardStore.okEditList({ emoji, title })
+		else dashboardStore.okCreateList({ emoji, title })
+
 		setEmoji('✏️')
 		setTitle('')
 	}
@@ -28,25 +33,21 @@ export default function CreateList() {
 	return (
 		<div className={styles['create-list'] + ' card'}>
 			<div className={styles['header']}>
-				<span className={styles['title']}>Create list</span>
+				<span className={styles['title']}>{dashboardStore.editListId ? 'Edit list' : 'Create list'}</span>
 				<IconButton icon={<CloseSvg />} onClick={handleCancel} />
 			</div>
 			<div className={styles['content']}>
 				<div className={styles['emoji']}>
 					<input maxLength={1} value={emoji} onChange={(e) => setEmoji(e.target.value)} />
 				</div>
-				<TextBox
-					icon={<TitleSvg />}
-					placeholder='Title'
-					value={title}
-					focus
-					onChange={(e) => setTitle(e.target.value)}
-				/>
+				<TextBox icon={<TitleSvg />} placeholder='Title' value={title} focus onChange={(e) => setTitle(e.target.value)} />
 			</div>
 			<div className={styles['buttons-wrapper']}>
 				<Button type='secondary' name='Cancel' onClick={handleCancel} />
-				<Button type='primary' name='Create' onClick={handleOk} />
+				<Button type='primary' name={dashboardStore.editListId ? 'Save' : 'Create'} onClick={handleOk} />
 			</div>
 		</div>
 	)
-}
+})
+
+export default CreateList
