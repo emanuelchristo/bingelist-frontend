@@ -10,3 +10,19 @@
 	gap: var(--spacing-lg) var(--spacing-sm);
 	padding-bottom: 32px;
 }
+
+.loader-wrapper {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	height: 200px;
+}
+
+@media (max-width: 1024px) {
+	.grid {
+		background-color: red;
+		grid-template-columns: repeat(3, 1fr);
+		gap: var(--spacing-lg) var(--spacing-sm);
+		padding-bottom: 32px;
+	}
+}

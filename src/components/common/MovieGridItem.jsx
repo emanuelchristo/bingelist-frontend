@@ -11,14 +11,18 @@ import ListAddSvg from '/src/assets/icons/list-add.svg?react'
 
 import styles from './MovieGridItem.module.css'
 
-const MovieGridItem = observer(({ width }) => {
+const MovieGridItem = observer(({ data, inList }) => {
 	function handleListClick() {
 		dashboardStore.handleAddToListClick('movieId')
 	}
 
 	return (
-		<div className={styles['movie-grid-item']} style={{ width: width }}>
-			<div className={styles['poster']} onClick={() => dashboardStore.handleMovieClick('movieId')}></div>
+		<div className={styles['movie-grid-item']}>
+			<div
+				className={styles['poster']}
+				style={{ backgroundImage: `url('${data.poster}')` }}
+				onClick={() => dashboardStore.handleMovieClick('movieId')}
+			></div>
 			<div className={styles['content']}>
 				<div className={styles['controls']}>
 					<div className={styles['controls-left']}>
@@ -26,12 +30,12 @@ const MovieGridItem = observer(({ width }) => {
 						<WatchedButton watched />
 					</div>
 					<div className={styles['playlist-button']} onClick={handleListClick}>
-						{/* <ListRemoveSvg className={styles['playlist-icon']} /> */}
-						<ListAddSvg className={styles['playlist-icon']} />
+						{!!inList && <ListRemoveSvg className={styles['playlist-icon']} />}
+						{!inList && <ListAddSvg className={styles['playlist-icon']} />}
 					</div>
 				</div>
 				<div className={styles['content-bottom']} onClick={() => dashboardStore.handleMovieClick('movieId')}>
-					<span className={styles['title']}>Blue Beetle</span>
+					<span className={styles['title']}>{data.title ?? '--'}</span>
 					<span className={styles['year']}>2023</span>
 					<div className='flex items-center gap-[6px]'>
 						<div className={styles['tag']}>Movie</div>

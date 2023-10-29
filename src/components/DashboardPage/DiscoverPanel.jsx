@@ -1,24 +1,22 @@
+import { useEffect } from 'react'
 import { observer } from 'mobx-react-lite'
 import { dashboardStore } from '../../store/stores'
 
-import MovieGridItem from '../common/MovieGridItem'
 import MovieGrid from '../common/MovieGrid'
 import DiscoverSection from '../DiscoverPage/DiscoverSection'
 
 import styles from './DiscoverPanel.module.css'
 
 const DiscoverPanel = observer(() => {
+	useEffect(() => {
+		dashboardStore.fetchDiscover()
+	}, [])
+
 	return (
 		<div className={'card ' + styles['discover-panel']}>
 			<div className={styles['discover-content']}>
 				<DiscoverSection title='🔥 Trending'>
-					<MovieGrid>
-						<MovieGridItem />
-						<MovieGridItem />
-						<MovieGridItem />
-						<MovieGridItem />
-						<MovieGridItem />
-					</MovieGrid>
+					<MovieGrid movies={dashboardStore.discover?.trending} />
 				</DiscoverSection>
 
 				<DiscoverSection
@@ -26,16 +24,11 @@ const DiscoverPanel = observer(() => {
 					selectedTab={dashboardStore.upcomingTab}
 					tabs={[
 						{ name: 'Movies', value: 'movies' },
-						{ name: 'TV Shows', value: 'tv-shows' },
+						{ name: 'TV Shows', value: 'tv' },
 					]}
 					onChange={dashboardStore.handleUpcomingTabChange}
 				>
-					<MovieGrid>
-						<MovieGridItem />
-						<MovieGridItem />
-						<MovieGridItem />
-						<MovieGridItem />
-					</MovieGrid>
+					<MovieGrid movies={dashboardStore.discover?.trending?.[dashboardStore.upcomingTab]} />
 				</DiscoverSection>
 
 				<DiscoverSection
@@ -43,16 +36,11 @@ const DiscoverPanel = observer(() => {
 					selectedTab={dashboardStore.popularTab}
 					tabs={[
 						{ name: 'Movies', value: 'movies' },
-						{ name: 'TV Shows', value: 'tv-shows' },
+						{ name: 'TV Shows', value: 'tv' },
 					]}
 					onChange={dashboardStore.handlePopularTabChange}
 				>
-					<MovieGrid>
-						<MovieGridItem />
-						<MovieGridItem />
-						<MovieGridItem />
-						<MovieGridItem />
-					</MovieGrid>
+					<MovieGrid movies={dashboardStore.discover?.popular?.[dashboardStore.popularTab]} />
 				</DiscoverSection>
 			</div>
 		</div>

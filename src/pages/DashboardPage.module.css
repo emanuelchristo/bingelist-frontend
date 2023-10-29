@@ -17,8 +17,8 @@
 
 .left-section,
 .right-section {
-	width: 286px;
-	max-width: 320px;
+	max-width: 280px;
+	min-width: 230px;
 }
 
 .center-section {

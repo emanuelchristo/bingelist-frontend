@@ -1,5 +1,7 @@
 import { makeAutoObservable } from 'mobx'
 
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL
+
 const defaultFilters = {
 	sort: 'popularity',
 	type: 'all',
@@ -90,6 +92,8 @@ class DashboardStore {
 	filtersChanged = false
 	appliedFilters = { ...defaultFilters }
 
+	discover = null
+
 	showCreateList = false
 	showDeleteList = false
 	showMovieModal = false
@@ -126,6 +130,16 @@ class DashboardStore {
 		this.showQuickSearch = false
 		this.quickSearchPromise(null)
 		this.quickSearchPromise = null
+	}
+
+	// DISCOVER
+	fetchDiscover = () => {
+		fetch(BACKEND_URL + '/discover?userId=1')
+			.then((res) => res.json())
+			.then((data) => {
+				console.log(data)
+				this.discover = data
+			})
 	}
 
 	// FILTERS

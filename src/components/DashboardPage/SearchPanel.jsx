@@ -4,7 +4,6 @@ import { useState } from 'react'
 import TextBox from '../common/TextBox'
 import Tabs from '../common/Tabs'
 import MovieGrid from '../common/MovieGrid'
-import MovieGridItem from '../common/MovieGridItem'
 
 import SearchSvg from '/src/assets/icons/search.svg?react'
 
@@ -35,20 +34,7 @@ export default function SearchPanel() {
 			</div>
 
 			<div className={styles['content']}>
-				<MovieGrid>
-					<MovieGridItem />
-					<MovieGridItem />
-					<MovieGridItem />
-					<MovieGridItem />
-					<MovieGridItem />
-					<MovieGridItem />
-					<MovieGridItem />
-					<MovieGridItem />
-					<MovieGridItem />
-					<MovieGridItem />
-					<MovieGridItem />
-					<MovieGridItem />
-				</MovieGrid>
+				<MovieGrid movies={[]} />
 			</div>
 		</div>
 	)

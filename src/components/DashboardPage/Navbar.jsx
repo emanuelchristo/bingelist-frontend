@@ -19,10 +19,6 @@ const Navbar = observer(() => {
 
 	const location = useLocation()
 
-	useEffect(() => {
-		console.log(location.pathname)
-	}, [location])
-
 	return (
 		<div className={styles['navbar'] + ' card'}>
 			<div className={styles['nav-items-wrapper']}>
