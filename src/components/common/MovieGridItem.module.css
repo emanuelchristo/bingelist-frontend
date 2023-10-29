@@ -22,7 +22,6 @@
 	width: 100%;
 	background-color: var(--image-bg);
 	border-radius: var(--radius-sm);
-	background-image: url('/bluebeetle.jpeg');
 	background-size: cover;
 	background-position: center;
 	position: relative;
@@ -85,8 +84,8 @@
 }
 
 .rating-wrapper img {
-	height: 20px;
-	width: 20px;
+	height: 17px;
+	width: 17px;
 }
 
 .controls {

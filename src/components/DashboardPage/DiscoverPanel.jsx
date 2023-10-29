@@ -28,7 +28,7 @@ const DiscoverPanel = observer(() => {
 					]}
 					onChange={dashboardStore.handleUpcomingTabChange}
 				>
-					<MovieGrid movies={dashboardStore.discover?.trending?.[dashboardStore.upcomingTab]} />
+					<MovieGrid movies={dashboardStore.discover?.upcoming?.[dashboardStore.upcomingTab]} />
 				</DiscoverSection>
 
 				<DiscoverSection

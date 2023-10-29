@@ -1,5 +1,5 @@
 .grid-container {
-	overflow-y: scroll;
+	/* overflow-y: scroll; */
 	padding: 0 var(--spacing-sm);
 	border-radius: var(--radius-lg);
 }
@@ -7,7 +7,7 @@
 .grid {
 	display: grid;
 	grid-template-columns: repeat(5, 1fr);
-	gap: var(--spacing-lg) var(--spacing-sm);
+	gap: var(--spacing-lg) 4px;
 	padding-bottom: 32px;
 }
 
@@ -18,11 +18,14 @@
 	height: 200px;
 }
 
-@media (max-width: 1024px) {
+@media (max-width: 1300px) {
 	.grid {
-		background-color: red;
+		grid-template-columns: repeat(4, 1fr);
+	}
+}
+
+@media (max-width: 1170px) {
+	.grid {
 		grid-template-columns: repeat(3, 1fr);
-		gap: var(--spacing-lg) var(--spacing-sm);
-		padding-bottom: 32px;
 	}
 }
