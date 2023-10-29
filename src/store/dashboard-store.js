@@ -133,13 +133,33 @@ class DashboardStore {
 		this.quickSearchPromise = null
 	}
 
+	// SEARCH
+	fetchSearch = (searchQuery, type, pageNo) => {
+		return new Promise((resolve) => {
+			try {
+				const url = new URL('/search', BACKEND_URL)
+				const params = new URLSearchParams({ searchQuery, type, pageNo })
+				url.search = params
+
+				fetch(url)
+					.then((res) => res.json())
+					.then((data) => {
+						if (data) resolve(data)
+						else resolve(null)
+					})
+			} catch (err) {
+				console.error(err)
+				resolve(null)
+			}
+		})
+	}
+
 	// DISCOVER
 	fetchDiscover = () => {
 		const url = new URL('/discover', BACKEND_URL)
 		fetch(url)
 			.then((res) => res.json())
 			.then((data) => {
-				console.log(data)
 				this.discover = data
 			})
 	}
@@ -203,7 +223,6 @@ class DashboardStore {
 	}
 
 	okCreateList = ({ emoji, title }) => {
-		console.log(emoji, title)
 		this.showCreateList = false
 		const id = Math.floor(Math.random() * 1000000)
 		this.lists.push({ id: id, name: title, count: 9, emoji: emoji })
@@ -253,7 +272,6 @@ class DashboardStore {
 					.then((data) => {
 						if (data) resolve(data)
 						else resolve(null)
-						console.log(data)
 					})
 			} catch (err) {
 				console.error(err)

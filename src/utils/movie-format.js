@@ -10,9 +10,25 @@ export function formatRating(rating) {
 }
 
 export function formatGenres(genres) {
-	return '--'
+	if (!genres instanceof Array) return '--'
+
+	const temp = genres.map((item) => item.name)
+	return temp.join(', ')
 }
 
-export function formatDuration(duration) {
-	return '--'
+export function formatDuration(minutes) {
+	if (isNaN(minutes) || minutes < 0) {
+		return '--'
+	}
+
+	const hours = Math.floor(minutes / 60)
+	const remainingMinutes = minutes % 60
+
+	if (hours === 0) {
+		return `${remainingMinutes}m`
+	} else if (remainingMinutes === 0) {
+		return `${hours}h`
+	} else {
+		return `${hours}h ${remainingMinutes}m`
+	}
 }

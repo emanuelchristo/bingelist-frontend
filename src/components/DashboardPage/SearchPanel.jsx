@@ -4,13 +4,24 @@ import { useState } from 'react'
 import TextBox from '../common/TextBox'
 import Tabs from '../common/Tabs'
 import MovieGrid from '../common/MovieGrid'
+import IconButton from '../common/IconButton'
 
 import SearchSvg from '/src/assets/icons/search.svg?react'
 
 import styles from './SearchPanel.module.css'
+import { dashboardStore } from '../../store/stores'
 
 export default function SearchPanel() {
+	const [searchQuery, setSearchQuery] = useState('')
 	const [selectedTab, setSelectedTab] = useState('all')
+	const [pageNo, setPageNo] = useState(0)
+	const [movies, setMovies] = useState([])
+
+	function handleSearch() {
+		dashboardStore.fetchSearch(searchQuery, selectedTab, pageNo).then((data) => {
+			if (data) setMovies([...movies, ...data])
+		})
+	}
 
 	return (
 		<div className={styles['search-panel'] + ' card'}>
@@ -21,20 +32,26 @@ export default function SearchPanel() {
 						tabs={[
 							{ name: 'All', value: 'all' },
 							{ name: 'Movies', value: 'movies' },
-							{ name: 'TV Shows', value: 'tv-shows' },
+							{ name: 'TV Shows', value: 'tv' },
 						]}
 						selectedTab={selectedTab}
 						onChange={setSelectedTab}
 					/>
 				</div>
 				<div className={styles['controls-wrapper']}>
-					<TextBox icon={<SearchSvg />} placeholder='Search...' clear={true} onChange={() => {}} />
-					{/* <IconButton icon={<GridSvg />} size='lg' /> */}
+					<TextBox
+						placeholder='Search...'
+						value={searchQuery}
+						onChange={(e) => {
+							setSearchQuery(e.target.value)
+						}}
+					/>
+					<IconButton icon={<SearchSvg />} size='lg' onClick={handleSearch} />
 				</div>
 			</div>
 
 			<div className={styles['content']}>
-				<MovieGrid movies={[]} />
+				<MovieGrid movies={movies} />
 			</div>
 		</div>
 	)
