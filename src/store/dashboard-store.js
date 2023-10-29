@@ -40,10 +40,10 @@ function genRtOptions() {
 
 class DashboardStore {
 	lists = [
-		{ listId: 1, name: 'Thrillers 90s', count: 5, emoji: '🔥' },
-		{ listId: 2, name: 'Romance', count: 32, emoji: '💗' },
-		{ listId: 3, name: 'Neo Noir', count: 14, emoji: '🎞️' },
-		{ listId: 4, name: 'Slow Burn', count: 8, emoji: '✏️' },
+		// { listId: 1, name: 'Thrillers 90s', count: 5, emoji: '🔥' },
+		// { listId: 2, name: 'Romance', count: 32, emoji: '💗' },
+		// { listId: 3, name: 'Neo Noir', count: 14, emoji: '🎞️' },
+		// { listId: 4, name: 'Slow Burn', count: 8, emoji: '✏️' },
 	]
 
 	filterSettings = {
@@ -167,7 +167,43 @@ class DashboardStore {
 
 	// GOOGLE AUTH
 	signIn = () => {
-		// googleSignIn()
+		google.accounts.id.prompt()
+	}
+
+	handleGoogleLogin = (response) => {
+		const jwt = response.credential
+		console.log(jwt)
+		window.localStorage.setItem('jwt', jwt)
+
+		this.verifyJwt()
+
+		// call signup to server here
+	}
+
+	signOut = () => {
+		localStorage.removeItem('jwt')
+		window.location = '/'
+	}
+
+	verifyJwt = () => {
+		let inDashboard = false
+		if (window.location.pathname.startsWith('/dashboard')) inDashboard = true
+
+		const jwt = window.localStorage.getItem('jwt')
+		if (!jwt) {
+			if (inDashboard) window.location = '/'
+		} else {
+			if (!inDashboard) window.location = '/dashboard/discover'
+		}
+
+		// axios.post(BACKEND_URL + '/verify_jwt', { jwt: jwt }).then(({ data }) => {
+		// 	data = { valid: true }
+		// 	if (!data.valid) {
+		// 		if (inDashboard) window.location = '/'
+		// 	} else {
+		// 		if (!inDashboard) window.location = '/dashboard/discover'
+		// 	}
+		// })
 	}
 
 	// QUICK SEARCH
@@ -256,14 +292,25 @@ class DashboardStore {
 	}
 
 	// LISTS
+	fetchLists = () => {
+		try {
+			axios.get(BACKEND_URL + '/lists').then(({ data }) => {
+				this.lists = data
+			})
+		} catch (err) {
+			console.error(err)
+		}
+	}
+
 	getLists = () => {
+		if (!(this.lists instanceof Array)) return []
 		const temp = this.lists.filter(() => 1)
 		temp.sort((a, b) => a.name.localeCompare(b.name))
 		return temp
 	}
 
 	getListById = (listId) => {
-		return this.lists.find((item) => item.id == listId)
+		return this.lists.find((item) => item.listId == listId)
 	}
 
 	handleListItemClick = (listId) => {

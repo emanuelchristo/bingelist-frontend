@@ -1,6 +1,5 @@
 import { observer } from 'mobx-react-lite'
 import { Link, useLocation } from 'react-router-dom'
-import { useEffect } from 'react'
 
 import DiscoverSvg from '/src/assets/icons/discover.svg?react'
 import ShuffleSvg from '/src/assets/icons/shuffle.svg?react'
@@ -8,6 +7,7 @@ import SimilarSvg from '/src/assets/icons/similar.svg?react'
 import SearchSvg from '/src/assets/icons/search.svg?react'
 
 import styles from './Navbar.module.css'
+import { dashboardStore } from '../../store/stores'
 
 const Navbar = observer(() => {
 	const navOptions = [
@@ -26,7 +26,7 @@ const Navbar = observer(() => {
 					<NavItem key={item.id} name={item.name} icon={item.icon} href={item.href} selected={location?.pathname?.startsWith(item.href)} />
 				))}
 			</div>
-			<div className={styles['avatar']}>
+			<div className={styles['avatar']} onClick={dashboardStore.signOut}>
 				<span className={styles['avatar-initials']}>C</span>
 			</div>
 		</div>

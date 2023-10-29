@@ -1,3 +1,4 @@
+import { useEffect } from 'react'
 import { dashboardStore } from '../../store/stores'
 import { observer } from 'mobx-react-lite'
 import { useParams } from 'react-router-dom'
@@ -12,6 +13,10 @@ import styles from './YourListsPanel.module.css'
 
 const YourListsPanel = observer(() => {
 	const { listId } = useParams()
+
+	useEffect(() => {
+		dashboardStore.fetchLists()
+	}, [])
 
 	return (
 		<div className={styles['your-lists-panel'] + ' card'}>

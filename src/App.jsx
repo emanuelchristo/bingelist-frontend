@@ -1,3 +1,6 @@
+import { dashboardStore } from './store/stores'
+import { useEffect } from 'react'
+
 import { Route, Routes } from 'react-router-dom'
 import DashboardPage from './pages/DashboardPage'
 import LandingPage from './pages/LandingPage'
@@ -9,6 +12,20 @@ import RandomPanel from './components/DashboardPage/RandomPanel'
 import SimilarPanel from './components/DashboardPage/SimilarPanel'
 
 function App() {
+	useEffect(() => {
+		google.accounts.id.initialize({
+			client_id: '524308456980-3d17hpn4h6qhdnn32oap5q52uta8gbsa.apps.googleusercontent.com',
+			callback: dashboardStore.handleGoogleLogin,
+		})
+
+		google.accounts.id.renderButton(
+			document.getElementById('google-sign-in-button-div'),
+			{ theme: 'outline', size: 'large' } // customization attributes
+		)
+
+		dashboardStore.verifyJwt()
+	}, [])
+
 	return (
 		<>
 			<Routes>
