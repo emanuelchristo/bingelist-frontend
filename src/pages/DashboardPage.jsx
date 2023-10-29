@@ -9,6 +9,7 @@ import CreateList from '../components/DashboardPage/CreateList'
 import MovieModal from '../components/common/MovieModal'
 import AddToListModal from '../components/common/AddToListModal'
 import DeleteList from '../components/DashboardPage/DeleteList'
+import QuickSearch from '../components/DashboardPage/QuickSearch'
 
 import styles from './DashboardPage.module.css'
 
@@ -18,6 +19,7 @@ const DashboardPage = observer(() => {
 		if (dashboardStore.showMovieModal) return <MovieModal />
 		if (dashboardStore.showAddToListModal) return <AddToListModal />
 		if (dashboardStore.showDeleteList) return <DeleteList />
+		if (dashboardStore.showQuickSearch) return <QuickSearch />
 		return null
 	}
 

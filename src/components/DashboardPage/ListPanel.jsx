@@ -27,6 +27,10 @@ export default function ListPanel() {
 		else if (value === 'edit') dashboardStore.editList(listId)
 	}
 
+	function handleAddMovie() {
+		dashboardStore.getQuickSearch().then((movieId) => {})
+	}
+
 	return (
 		<div className={styles['list-panel'] + ' card'}>
 			<div className={styles['header']}>
@@ -56,7 +60,7 @@ export default function ListPanel() {
 				<div className={styles['controls-wrapper']}>
 					<TextBox icon={<SearchSvg />} placeholder='Search...' clear={true} onChange={() => {}} />
 					{/* <IconButton icon={<GridSvg />} size='lg' /> */}
-					<IconButton icon={<AddSvg />} size='lg' />
+					<IconButton icon={<AddSvg />} size='lg' onClick={handleAddMovie} />
 				</div>
 			</div>
 			<MovieGrid>

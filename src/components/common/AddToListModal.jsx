@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { observer } from 'mobx-react-lite'
 import { dashboardStore } from '../../store/stores'
 
@@ -11,6 +11,18 @@ import styles from './AddToListModal.module.css'
 
 const AddToListModal = observer(() => {
 	const [selectedLists, setSelectedLists] = useState([])
+
+	const cardRef = useRef()
+
+	useEffect(() => {
+		function handleOutsideClick(e) {
+			if (cardRef.current && !cardRef.current.contains(e.target)) dashboardStore.handleAddToListCancel()
+		}
+		document.addEventListener('mousedown', handleOutsideClick)
+		return () => {
+			document.removeEventListener('mousedown', handleOutsideClick)
+		}
+	}, [])
 
 	function handleOk() {}
 
@@ -25,7 +37,7 @@ const AddToListModal = observer(() => {
 	}
 
 	return (
-		<div className={styles['add-to-list-modal'] + ' card'}>
+		<div className={styles['add-to-list-modal'] + ' card'} ref={cardRef}>
 			<div className={styles['header']}>
 				<span className={styles['title']}>Add to list</span>
 				<IconButton icon={<CloseSvg />} onClick={dashboardStore.handleAddToListCancel} />

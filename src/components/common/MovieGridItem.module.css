@@ -20,7 +20,7 @@
 .poster {
 	aspect-ratio: 134 / 225;
 	width: 100%;
-	background: var(--light-bg);
+	background-color: var(--image-bg);
 	border-radius: var(--radius-sm);
 	background-image: url('/bluebeetle.jpeg');
 	background-size: cover;

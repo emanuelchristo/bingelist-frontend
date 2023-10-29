@@ -1,5 +1,5 @@
 import { observer } from 'mobx-react-lite'
-import { useState } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { dashboardStore } from '../../store/stores'
 import IconButton from '../common/IconButton'
 
@@ -11,8 +11,20 @@ import TextBox from '../common/TextBox'
 import styles from './CreateList.module.css'
 
 const CreateList = observer(() => {
+	const cardRef = useRef()
+
 	const [emoji, setEmoji] = useState('✏️')
 	const [title, setTitle] = useState('')
+
+	useEffect(() => {
+		function handleOutsideClick(e) {
+			if (cardRef.current && !cardRef.current.contains(e.target)) handleCancel()
+		}
+		document.addEventListener('mousedown', handleOutsideClick)
+		return () => {
+			document.removeEventListener('mousedown', handleOutsideClick)
+		}
+	}, [])
 
 	function handleCancel() {
 		if (dashboardStore.editListId) dashboardStore.cancelEditList()
@@ -31,7 +43,7 @@ const CreateList = observer(() => {
 	}
 
 	return (
-		<div className={styles['create-list'] + ' card'}>
+		<div className={styles['create-list'] + ' card'} ref={cardRef}>
 			<div className={styles['header']}>
 				<span className={styles['title']}>{dashboardStore.editListId ? 'Edit list' : 'Create list'}</span>
 				<IconButton icon={<CloseSvg />} onClick={handleCancel} />

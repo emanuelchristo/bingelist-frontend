@@ -2,7 +2,7 @@ import { useRef, useEffect } from 'react'
 
 import styles from './ContextMenu.module.css'
 
-export default function ContextMenu({ options, onClick, onClose, show, x, y }) {
+export default function ContextMenu({ options, onClick, onClose, show }) {
 	const menuRef = useRef()
 
 	useEffect(() => {
@@ -18,7 +18,7 @@ export default function ContextMenu({ options, onClick, onClose, show, x, y }) {
 	if (!show) return <></>
 	else
 		return (
-			<div className={styles['context-menu']} style={{ left: x, top: y }} ref={menuRef}>
+			<div className={styles['context-menu']} ref={menuRef}>
 				{options.map((item) => (
 					<ContextMenuItem key={item.value} icon={item.icon} name={item.name} onClick={() => onClick(item.value)} />
 				))}

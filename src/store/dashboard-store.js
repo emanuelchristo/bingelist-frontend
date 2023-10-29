@@ -94,10 +94,12 @@ class DashboardStore {
 	showDeleteList = false
 	showMovieModal = false
 	showAddToListModal = false
+	showQuickSearch = false
 
 	deleteListId = null
 	addToListMovieId = null
 	editListId = null
+	quickSearchPromise = null
 
 	popularTab = 'movies'
 	upcomingTab = 'movies'
@@ -106,14 +108,24 @@ class DashboardStore {
 		makeAutoObservable(this)
 	}
 
-	getLists = () => {
-		const temp = this.lists.filter(() => 1)
-		temp.sort((a, b) => a.name.localeCompare(b.name))
-		return temp
+	// QUICK SEARCH
+	getQuickSearch = () => {
+		this.showQuickSearch = true
+		return new Promise((resolve) => {
+			this.quickSearchPromise = resolve
+		})
 	}
 
-	getListById = (listId) => {
-		return this.lists.find((item) => item.id == listId)
+	chooseQuickSearch = (movieId) => {
+		this.showQuickSearch = false
+		this.quickSearchPromise(movieId)
+		this.quickSearchPromise = null
+	}
+
+	closeQuickSearch = () => {
+		this.showQuickSearch = false
+		this.quickSearchPromise(null)
+		this.quickSearchPromise = null
 	}
 
 	// FILTERS
@@ -152,6 +164,16 @@ class DashboardStore {
 	}
 
 	// LISTS
+	getLists = () => {
+		const temp = this.lists.filter(() => 1)
+		temp.sort((a, b) => a.name.localeCompare(b.name))
+		return temp
+	}
+
+	getListById = (listId) => {
+		return this.lists.find((item) => item.id == listId)
+	}
+
 	handleListItemClick = (listId) => {
 		this.selectedListId = listId
 	}

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { dashboardStore } from '../../store/stores'
 import IconButton from '../common/IconButton'
 
@@ -11,13 +11,23 @@ import { observer } from 'mobx-react-lite'
 const DeleteList = observer(() => {
 	const [list, setList] = useState(null)
 
+	const cardRef = useRef()
+
 	useEffect(() => {
 		const list = dashboardStore.getListById(dashboardStore.deleteListId)
 		setList(list)
+
+		function handleOutsideClick(e) {
+			if (cardRef.current && !cardRef.current.contains(e.target)) dashboardStore.cancelDeleteList()
+		}
+		document.addEventListener('mousedown', handleOutsideClick)
+		return () => {
+			document.removeEventListener('mousedown', handleOutsideClick)
+		}
 	}, [])
 
 	return (
-		<div className={styles['delete-list'] + ' card'}>
+		<div className={styles['delete-list'] + ' card'} ref={cardRef}>
 			<div className={styles['header']}>
 				<span className={styles['title']}>Delete list</span>
 				<IconButton icon={<CloseSvg />} onClick={dashboardStore.cancelDeleteList} />
