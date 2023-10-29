@@ -1,6 +1,6 @@
 import { useParams } from 'react-router-dom'
 import { dashboardStore } from '../../store/stores'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 
 // import GridSvg from '/src/assets/icons/grid.svg?react'
 import MoreSvg from '/src/assets/icons/more.svg?react'
@@ -19,7 +19,13 @@ import styles from './ListPanel.module.css'
 
 export default function ListPanel() {
 	const { listId } = useParams()
+	const [details, setDetails] = useState(null)
 	const [showMoreMenu, setShowMoreMenu] = useState(false)
+
+	useEffect(() => {
+		if (!listId) return
+		setDetails(dashboardStore.getListById(listId))
+	}, [listId])
 
 	function handleMenuClick(value) {
 		setShowMoreMenu(false)
@@ -36,11 +42,11 @@ export default function ListPanel() {
 			<div className={styles['header']}>
 				<div className={styles['list-heading']}>
 					<div className={styles['emoji-wrapper']}>
-						<span>🔥</span>
+						<span>{details?.emoji}</span>
 					</div>
 					<div className={styles['text-wrapper']}>
-						<span className={styles['name']}>Thrillers 90s</span>
-						<span className={styles['count']}>12 items</span>
+						<span className={styles['name']}>{details?.name}</span>
+						<span className={styles['count']}>{`${details?.count} ${details?.count == 1 ? 'item' : 'items'}`}</span>
 					</div>
 					<div className={styles['more-container']}>
 						<IconButton icon={<MoreSvg />} onClick={() => setShowMoreMenu(true)} />

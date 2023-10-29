@@ -2,7 +2,7 @@ import { useRef, useEffect, useState } from 'react'
 
 import styles from './ListItem.module.css'
 
-export default function ListItem({ emoji, name, count, noHoverAnim, selected, id, onClick }) {
+export default function ListItem({ emoji, name, count, noHoverAnim, selected, onClick }) {
 	const itemRef = useRef()
 
 	const [clicked, setClicked] = useState(false)

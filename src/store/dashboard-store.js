@@ -38,6 +38,12 @@ function genRtOptions() {
 	return options
 }
 
+function genAuthHeaders() {
+	const jwt = window.localStorage.getItem('jwt')
+	if (!jwt) return {}
+	return { Authorization: `Bearer ${jwt}` }
+}
+
 class DashboardStore {
 	lists = [
 		// { listId: 1, name: 'Thrillers 90s', count: 5, emoji: '🔥' },
@@ -249,7 +255,13 @@ class DashboardStore {
 	fetchDiscover = () => {
 		axios.get(BACKEND_URL + '/discover').then(({ data }) => {
 			// Fetching watched faved status
-			const merged = [...data.trending, ...data.popular.tv, ...data.popular.movies, ...data.upcoming.movies, ...data.upcoming.tv]
+			const merged = [
+				...data.trending,
+				...data.popular.tv,
+				...data.popular.movies,
+				...data.upcoming.movies,
+				...data.upcoming.tv,
+			]
 			this.updateMovieWaFa(merged)
 
 			this.discover = data
@@ -293,13 +305,17 @@ class DashboardStore {
 
 	// LISTS
 	fetchLists = () => {
-		try {
-			axios.get(BACKEND_URL + '/lists').then(({ data }) => {
-				this.lists = data
-			})
-		} catch (err) {
-			console.error(err)
-		}
+		return new Promise((resolve, reject) => {
+			try {
+				axios.get(BACKEND_URL + '/lists', { headers: genAuthHeaders() }).then(({ data }) => {
+					this.lists = data
+					resolve()
+				})
+			} catch (err) {
+				console.error(err)
+				reject()
+			}
+		})
 	}
 
 	getLists = () => {
@@ -326,12 +342,17 @@ class DashboardStore {
 	}
 
 	okCreateList = ({ emoji, title }) => {
-		axios.post(BACKEND_URL + '/create_list', null, { params: { listName: title, listEmoji: emoji } }).then(({ data }) => {
-			this.showCreateList = false
-			console.log(data)
-			this.lists.push(data)
-			this.selectedListId = data.listId
-		})
+		axios
+			.post(BACKEND_URL + '/create_list', null, {
+				headers: genAuthHeaders(),
+				params: { listName: title, listEmoji: emoji },
+			})
+			.then(({ data }) => {
+				this.showCreateList = false
+				this.lists.push(data)
+				this.selectedListId = data.listId
+				window.location = '/dashboard/list/' + data.listId
+			})
 	}
 
 	editList = (listId) => {
@@ -344,9 +365,19 @@ class DashboardStore {
 		this.editListId = null
 	}
 
-	okEditList = () => {
-		this.showCreateList = false
-		this.editListId = null
+	okEditList = ({ title, emoji }) => {
+		axios
+			.post(BACKEND_URL + '/edit_list', null, {
+				headers: genAuthHeaders(),
+				params: { listId: this.editListId, listName: title, listEmoji: emoji },
+			})
+			.then(({ data }) => {
+				const temp = this.lists.filter((item) => item.listId != this.editListId)
+				temp.push(data)
+				this.lists = temp
+				this.showCreateList = false
+				this.editListId = null
+			})
 	}
 
 	deleteList = (listId) => {
@@ -360,8 +391,17 @@ class DashboardStore {
 	}
 
 	okDeleteList = () => {
-		this.deleteListId = null
-		this.showDeleteList = false
+		axios
+			.post(BACKEND_URL + '/delete_list', null, { headers: genAuthHeaders(), params: { listId: this.deleteListId } })
+			.then(({ data }) => {
+				if (data.deleted) {
+					const temp = this.lists.filter((item) => item.listId != this.deleteListId)
+					this.lists = temp
+					this.deleteListId = null
+					this.showDeleteList = false
+					window.location = '/dashboard/discover'
+				}
+			})
 	}
 
 	// MOVIE

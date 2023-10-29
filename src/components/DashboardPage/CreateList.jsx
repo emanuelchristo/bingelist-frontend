@@ -26,6 +26,13 @@ const CreateList = observer(() => {
 		}
 	}, [])
 
+	useEffect(() => {
+		if (!dashboardStore.editListId) return
+		const currList = dashboardStore.getListById(dashboardStore.editListId)
+		setEmoji(currList.emoji)
+		setTitle(currList.name)
+	}, [dashboardStore.editListId])
+
 	function handleCancel() {
 		if (dashboardStore.editListId) dashboardStore.cancelEditList()
 		else dashboardStore.cancelCreateList()
@@ -52,7 +59,13 @@ const CreateList = observer(() => {
 				<div className={styles['emoji']}>
 					<input value={emoji} onChange={(e) => setEmoji(e.target.value)} />
 				</div>
-				<TextBox icon={<TitleSvg />} placeholder='Title' value={title} focus onChange={(e) => setTitle(e.target.value)} />
+				<TextBox
+					icon={<TitleSvg />}
+					placeholder='Title'
+					value={title}
+					focus
+					onChange={(e) => setTitle(e.target.value)}
+				/>
 			</div>
 			<div className={styles['buttons-wrapper']}>
 				<Button type='secondary' name='Cancel' onClick={handleCancel} />
