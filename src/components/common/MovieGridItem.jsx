@@ -1,3 +1,4 @@
+import { formatMediaType, formatRating } from '../../utils/movie-format'
 import { observer } from 'mobx-react-lite'
 import { dashboardStore } from '../../store/stores'
 
@@ -11,28 +12,17 @@ import ListAddSvg from '/src/assets/icons/list-add.svg?react'
 
 import styles from './MovieGridItem.module.css'
 
-function formatMediaType(mediaType) {
-	if (mediaType === 'movie') return 'Movie'
-	else if (mediaType === 'tv') return 'TV'
-	return '--'
-}
-
-function formatRating(rating) {
-	if (typeof rating !== 'number') return '--'
-	return rating.toFixed(1)
-}
-
 const MovieGridItem = observer(({ data, inList }) => {
 	function handleListClick() {
-		dashboardStore.handleAddToListClick('movieId')
+		dashboardStore.handleAddToListClick({ id: data?.id, media_type: data?.media_type })
 	}
 
 	return (
 		<div className={styles['movie-grid-item']}>
 			<div
 				className={styles['poster']}
-				style={{ backgroundImage: `url('${data.poster_path}')` }}
-				onClick={() => dashboardStore.handleMovieClick('movieId')}
+				style={{ backgroundImage: `url('${data?.poster_path}')` }}
+				onClick={() => dashboardStore.handleMovieClick({ id: data?.id, media_type: data?.media_type })}
 			></div>
 			<div className={styles['content']}>
 				<div className={styles['controls']}>
@@ -45,15 +35,15 @@ const MovieGridItem = observer(({ data, inList }) => {
 						{!inList && <ListAddSvg className={styles['playlist-icon']} />}
 					</div>
 				</div>
-				<div className={styles['content-bottom']} onClick={() => dashboardStore.handleMovieClick('movieId')}>
-					<span className={styles['title']}>{data.title ?? '--'}</span>
-					<span className={styles['year']}>{data.release_date?.slice(0, 4) || '--'}</span>
+				<div className={styles['content-bottom']} onClick={() => dashboardStore.handleMovieClick({ id: data?.id, media_type: data?.media_type })}>
+					<span className={styles['title']}>{data?.title ?? '--'}</span>
+					<span className={styles['year']}>{data?.release_date?.slice(0, 4) || '--'}</span>
 					<div className='flex items-center gap-[6px]'>
-						<div className={styles['tag']}>{formatMediaType(data.media_type)}</div>
+						<div className={styles['tag']}>{formatMediaType(data?.media_type)}</div>
 						<div className={styles['dot']}></div>
 						<div className={styles['rating-wrapper']}>
 							<img src={RatingIcon} />
-							<span>{formatRating(data.vote_average)}</span>
+							<span>{formatRating(data?.vote_average)}</span>
 						</div>
 					</div>
 				</div>

@@ -100,6 +100,7 @@ class DashboardStore {
 	showAddToListModal = false
 	showQuickSearch = false
 
+	movieModalId = null
 	deleteListId = null
 	addToListMovieId = null
 	editListId = null
@@ -134,7 +135,8 @@ class DashboardStore {
 
 	// DISCOVER
 	fetchDiscover = () => {
-		fetch(BACKEND_URL + '/discover?userId=1')
+		const url = new URL('/discover', BACKEND_URL)
+		fetch(url)
 			.then((res) => res.json())
 			.then((data) => {
 				console.log(data)
@@ -239,12 +241,35 @@ class DashboardStore {
 	}
 
 	// MOVIE
+	fetchMovieDetails = (movieId) => {
+		return new Promise(async (resolve) => {
+			try {
+				const url = new URL('/movie_details', BACKEND_URL)
+				const params = new URLSearchParams(movieId)
+				url.search = params
+
+				fetch(url)
+					.then((res) => res.json())
+					.then((data) => {
+						if (data) resolve(data)
+						else resolve(null)
+						console.log(data)
+					})
+			} catch (err) {
+				console.error(err)
+				resolve(null)
+			}
+		})
+	}
+
 	handleMovieClick = (movieId) => {
 		this.showMovieModal = true
+		this.movieModalId = movieId
 	}
 
 	cancelMovieModal = () => {
 		this.showMovieModal = false
+		this.movieModalId = null
 	}
 
 	handleAddToListClick = (movieId) => {
@@ -258,6 +283,8 @@ class DashboardStore {
 		this.addToListMovieId = null
 		this.showAddToListModal = false
 	}
+
+	playTrailer = (trailerUrl) => {}
 
 	// DISCOVER PAGE
 	handlePopularTabChange = (value) => {

@@ -1,5 +1,6 @@
+import { observer } from 'mobx-react-lite'
 import { dashboardStore } from '../../store/stores'
-import { useRef, useEffect } from 'react'
+import { useRef, useEffect, useState } from 'react'
 
 import IconButton from '../common/IconButton'
 import CloseSvg from '/src/assets/icons/close.svg?react'
@@ -7,10 +8,16 @@ import MovieContent from './MovieContent'
 
 import styles from './MovieModal.module.css'
 
-export default function MovieModal() {
+const MovieModal = observer(() => {
 	const cardRef = useRef()
 
+	const [movieDetails, setMovieDetails] = useState(null)
+
 	useEffect(() => {
+		dashboardStore.fetchMovieDetails(dashboardStore.movieModalId).then((data) => {
+			if (data) setMovieDetails(data)
+		})
+
 		function handleOutsideClick(e) {
 			if (cardRef.current && !cardRef.current.contains(e.target)) dashboardStore.cancelMovieModal()
 		}
@@ -26,7 +33,9 @@ export default function MovieModal() {
 				<span className={styles['title']}>Movie</span>
 				<IconButton icon={<CloseSvg />} onClick={dashboardStore.cancelMovieModal} />
 			</div>
-			<MovieContent />
+			<MovieContent data={movieDetails} />
 		</div>
 	)
-}
+})
+
+export default MovieModal

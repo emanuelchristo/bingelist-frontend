@@ -6,10 +6,19 @@
 	--side-padding: 24px;
 }
 
+.content-container > div {
+	border-bottom: var(--card-border);
+}
+
+.content-container > div:last-child {
+	border-bottom: none;
+}
+
 .poster {
 	aspect-ratio: 134 / 225;
 	width: 120px;
-	background: var(--light-bg);
+	background-color: var(--image-bg);
+	border: var(--card-border);
 	border-radius: var(--radius-sm);
 	background-image: url('/bluebeetle.jpeg');
 	background-size: cover;
@@ -22,7 +31,6 @@
 	display: flex;
 	gap: var(--side-padding);
 	align-items: center;
-	border-bottom: var(--card-border);
 }
 
 .main-right {
@@ -96,6 +104,10 @@
 	gap: 8px;
 }
 
+.rt-wrapper img {
+	height: 20px;
+}
+
 .trailer-button {
 	height: 32px;
 	width: 130px;
@@ -114,6 +126,14 @@
 	background-color: var(--text-bright-active);
 }
 
+.trailer-button:disabled {
+	opacity: var(--disabled-opacity);
+}
+
+.trailer-button:disabled:active {
+	background-color: var(--text-bright);
+}
+
 .play-icon {
 	width: 18px;
 	height: 18px;
@@ -127,7 +147,6 @@
 	display: flex;
 	flex-direction: column;
 	padding: var(--side-padding);
-	border-bottom: var(--card-border);
 	gap: var(--spacing-sm);
 }
 
@@ -144,7 +163,6 @@
 	display: flex;
 	padding: var(--side-padding);
 	gap: var(--side-padding);
-	border-bottom: var(--card-border);
 	overflow-x: scroll;
 	flex-shrink: 0;
 }
