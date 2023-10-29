@@ -1,7 +1,8 @@
 :root {
 	/* COLORS */
 	--app-bg: #040404;
-	/* --app-bg: linear-gradient(#141414, #000); */
+	--app-bg: linear-gradient(#0a0a0a, #131313);
+	/* --app-bg: linear-gradient(#0005ab, #00708c); */
 	--card-bg: radial-gradient(659.35% 100% at 50% 100%, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.04) 100%);
 	--light-bg: radial-gradient(53.03% 100% at 50% 100%, rgba(255, 255, 255, 0.12) 0%, rgba(255, 255, 255, 0.08) 100%);
 	--light-bg-active: radial-gradient(53.03% 100% at 50% 100%, rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0.09) 100%);
@@ -11,6 +12,8 @@
 	--text-lighter: rgba(255, 255, 255, 0.2);
 	--text-dark: #000;
 	--image-bg: rgba(255, 255, 255, 0.07);
+
+	--scroll-bar-color: #444;
 
 	--shadow-glow: 0px 0px 25px 0px rgba(255, 255, 255, 0.2);
 

@@ -27,8 +27,14 @@ const MovieGridItem = observer(({ data, inList }) => {
 			<div className={styles['content']}>
 				<div className={styles['controls']}>
 					<div className={styles['controls-left']}>
-						<FavButton fav />
-						<WatchedButton watched />
+						<FavButton
+							fav={dashboardStore.getMovieWaFa({ id: data?.id, media_type: data?.media_type })?.faved}
+							onClick={() => dashboardStore.favMovie({ id: data?.id, media_type: data?.media_type })}
+						/>
+						<WatchedButton
+							watched={dashboardStore.getMovieWaFa({ id: data?.id, media_type: data?.media_type })?.watched}
+							onClick={() => dashboardStore.watchedMovie({ id: data?.id, media_type: data?.media_type })}
+						/>
 					</div>
 					<div className={styles['playlist-button']} onClick={handleListClick}>
 						{!!inList && <ListRemoveSvg className={styles['playlist-icon']} />}

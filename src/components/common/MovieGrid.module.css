@@ -18,6 +18,14 @@
 	height: 200px;
 }
 
+.empty {
+	height: 200px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	color: var(--text-light);
+}
+
 @media (max-width: 1300px) {
 	.grid {
 		grid-template-columns: repeat(4, 1fr);

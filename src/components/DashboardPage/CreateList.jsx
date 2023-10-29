@@ -50,7 +50,7 @@ const CreateList = observer(() => {
 			</div>
 			<div className={styles['content']}>
 				<div className={styles['emoji']}>
-					<input maxLength={1} value={emoji} onChange={(e) => setEmoji(e.target.value)} />
+					<input value={emoji} onChange={(e) => setEmoji(e.target.value)} />
 				</div>
 				<TextBox icon={<TitleSvg />} placeholder='Title' value={title} focus onChange={(e) => setTitle(e.target.value)} />
 			</div>

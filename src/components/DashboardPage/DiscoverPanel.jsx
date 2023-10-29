@@ -16,7 +16,7 @@ const DiscoverPanel = observer(() => {
 		<div className={'card ' + styles['discover-panel']}>
 			<div className={styles['discover-content']}>
 				<DiscoverSection title='🔥 Trending'>
-					<MovieGrid movies={dashboardStore.discover?.trending} />
+					<MovieGrid movies={dashboardStore.discover?.trending} loading={!dashboardStore.discover?.trending} />
 				</DiscoverSection>
 
 				<DiscoverSection
@@ -28,7 +28,10 @@ const DiscoverPanel = observer(() => {
 					]}
 					onChange={dashboardStore.handleUpcomingTabChange}
 				>
-					<MovieGrid movies={dashboardStore.discover?.upcoming?.[dashboardStore.upcomingTab]} />
+					<MovieGrid
+						movies={dashboardStore.discover?.upcoming?.[dashboardStore.upcomingTab]}
+						loading={!dashboardStore.discover?.upcoming?.[dashboardStore.upcomingTab]}
+					/>
 				</DiscoverSection>
 
 				<DiscoverSection
@@ -40,7 +43,10 @@ const DiscoverPanel = observer(() => {
 					]}
 					onChange={dashboardStore.handlePopularTabChange}
 				>
-					<MovieGrid movies={dashboardStore.discover?.popular?.[dashboardStore.popularTab]} />
+					<MovieGrid
+						movies={dashboardStore.discover?.popular?.[dashboardStore.popularTab]}
+						loading={!dashboardStore.discover?.popular?.[dashboardStore.popularTab]}
+					/>
 				</DiscoverSection>
 			</div>
 		</div>

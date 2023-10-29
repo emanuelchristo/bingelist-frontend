@@ -25,8 +25,8 @@ const YourListsPanel = observer(() => {
 			<div className={styles['lists-container']}>
 				<div className={styles['lists-wrapper']}>
 					{dashboardStore.getLists().map((item) => (
-						<Link to={`/dashboard/list/${item.id}`} key={item.id}>
-							<ListItem emoji={item.emoji} name={item.name} count={item.count} id={item.id} selected={listId == item.id} />
+						<Link to={`/dashboard/list/${item.listId}`} key={item.listId}>
+							<ListItem emoji={item.emoji} name={item.name} count={item.count} id={item.listId} selected={listId == item.listId} />
 						</Link>
 					))}
 				</div>

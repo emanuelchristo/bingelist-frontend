@@ -1,4 +1,6 @@
 import { makeAutoObservable } from 'mobx'
+import axios from 'axios'
+// import { googleSignIn } from '../utils/google-auth'
 
 const BACKEND_URL = import.meta.env.VITE_BACKEND_URL
 
@@ -38,10 +40,10 @@ function genRtOptions() {
 
 class DashboardStore {
 	lists = [
-		{ id: 1, name: 'Thrillers 90s', count: 5, emoji: '🔥' },
-		{ id: 2, name: 'Romance', count: 32, emoji: '💗' },
-		{ id: 3, name: 'Neo Noir', count: 14, emoji: '🎞️' },
-		{ id: 4, name: 'Slow Burn', count: 8, emoji: '✏️' },
+		{ listId: 1, name: 'Thrillers 90s', count: 5, emoji: '🔥' },
+		{ listId: 2, name: 'Romance', count: 32, emoji: '💗' },
+		{ listId: 3, name: 'Neo Noir', count: 14, emoji: '🎞️' },
+		{ listId: 4, name: 'Slow Burn', count: 8, emoji: '✏️' },
 	]
 
 	filterSettings = {
@@ -100,17 +102,72 @@ class DashboardStore {
 	showAddToListModal = false
 	showQuickSearch = false
 
+	youtubeVideo = null
 	movieModalId = null
 	deleteListId = null
 	addToListMovieId = null
 	editListId = null
 	quickSearchPromise = null
 
+	waFaStatus = {}
+
 	popularTab = 'movies'
 	upcomingTab = 'movies'
 
 	constructor() {
 		makeAutoObservable(this)
+	}
+
+	// WATCHED FAVED
+	updateMovieWaFa = (movieList) => {
+		const temp = movieList.map((item) => {
+			return { id: item.id, media_type: item.media_type }
+		})
+
+		axios
+			.post(BACKEND_URL + '/watched_or_faved', {
+				movieList: temp,
+			})
+			.then(({ data }) => {
+				this.waFaStatus = { ...this.waFaStatus, ...data }
+			})
+	}
+
+	getMovieWaFa = (movieId) => {
+		const key = movieId.media_type + '_' + movieId.id
+		return this.waFaStatus[key] ?? null
+	}
+
+	favMovie = (movieId) => {
+		axios
+			.post(BACKEND_URL + '/add_to_favlist', null, {
+				params: {
+					...movieId,
+				},
+			})
+			.then(({ data }) => {
+				this.waFaStatus = { ...this.waFaStatus, ...data }
+			})
+			.catch(console.error)
+	}
+
+	watchedMovie = (movieId) => {
+		axios
+			.post(BACKEND_URL + '/add_to_watchlist', null, {
+				params: {
+					...movieId,
+				},
+			})
+			.then(({ data }) => {
+				console.log(data)
+				this.waFaStatus = { ...this.waFaStatus, ...data }
+			})
+			.catch(console.error)
+	}
+
+	// GOOGLE AUTH
+	signIn = () => {
+		// googleSignIn()
 	}
 
 	// QUICK SEARCH
@@ -137,13 +194,11 @@ class DashboardStore {
 	fetchSearch = (searchQuery, type, pageNo) => {
 		return new Promise((resolve) => {
 			try {
-				const url = new URL('/search', BACKEND_URL)
-				const params = new URLSearchParams({ searchQuery, type, pageNo })
-				url.search = params
-
-				fetch(url)
-					.then((res) => res.json())
-					.then((data) => {
+				axios
+					.get(BACKEND_URL + '/search', {
+						params: { searchQuery, type, pageNo },
+					})
+					.then(({ data }) => {
 						if (data) resolve(data)
 						else resolve(null)
 					})
@@ -156,12 +211,13 @@ class DashboardStore {
 
 	// DISCOVER
 	fetchDiscover = () => {
-		const url = new URL('/discover', BACKEND_URL)
-		fetch(url)
-			.then((res) => res.json())
-			.then((data) => {
-				this.discover = data
-			})
+		axios.get(BACKEND_URL + '/discover').then(({ data }) => {
+			// Fetching watched faved status
+			const merged = [...data.trending, ...data.popular.tv, ...data.popular.movies, ...data.upcoming.movies, ...data.upcoming.tv]
+			this.updateMovieWaFa(merged)
+
+			this.discover = data
+		})
 	}
 
 	// FILTERS
@@ -223,10 +279,12 @@ class DashboardStore {
 	}
 
 	okCreateList = ({ emoji, title }) => {
-		this.showCreateList = false
-		const id = Math.floor(Math.random() * 1000000)
-		this.lists.push({ id: id, name: title, count: 9, emoji: emoji })
-		this.selectedListId = id
+		axios.post(BACKEND_URL + '/create_list', null, { params: { listName: title, listEmoji: emoji } }).then(({ data }) => {
+			this.showCreateList = false
+			console.log(data)
+			this.lists.push(data)
+			this.selectedListId = data.listId
+		})
 	}
 
 	editList = (listId) => {
@@ -263,16 +321,10 @@ class DashboardStore {
 	fetchMovieDetails = (movieId) => {
 		return new Promise(async (resolve) => {
 			try {
-				const url = new URL('/movie_details', BACKEND_URL)
-				const params = new URLSearchParams(movieId)
-				url.search = params
-
-				fetch(url)
-					.then((res) => res.json())
-					.then((data) => {
-						if (data) resolve(data)
-						else resolve(null)
-					})
+				axios.get(BACKEND_URL + '/movie_details', { params: movieId }).then(({ data }) => {
+					if (data) resolve(data)
+					else resolve(null)
+				})
 			} catch (err) {
 				console.error(err)
 				resolve(null)
@@ -302,7 +354,13 @@ class DashboardStore {
 		this.showAddToListModal = false
 	}
 
-	playTrailer = (trailerUrl) => {}
+	playTrailer = (trailerUrl) => {
+		this.youtubeVideo = trailerUrl
+	}
+
+	closeYoutubePlayer = () => {
+		this.youtubeVideo = null
+	}
 
 	// DISCOVER PAGE
 	handlePopularTabChange = (value) => {

@@ -187,12 +187,19 @@
 }
 
 .top-cast {
-	padding: var(--side-padding);
+	padding: var(--side-padding) 0;
+	padding-bottom: 0;
+}
+
+.top-cast .section-title {
+	margin-left: var(--side-padding);
 }
 
 .cast-wrapper {
 	display: flex;
 	margin-top: 16px;
+	padding: var(--side-padding);
+	padding-top: 0;
 	gap: var(--side-padding);
 	overflow-x: scroll;
 }

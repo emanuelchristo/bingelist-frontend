@@ -124,6 +124,8 @@
 	color: var(--green);
 }
 
-.playlist-button:active path {
+.playlist-button:active path,
+.fav-button:active path,
+.watched-button:active path {
 	fill: var(--text-bright);
 }

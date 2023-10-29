@@ -1,5 +1,5 @@
 .quick-search {
-	background: var(--app-bg) var(--card-bg) !important;
+	background: var(--app-bg), var(--card-bg) !important;
 	width: 600px;
 	height: 60vh;
 	display: flex;

@@ -13,9 +13,10 @@ import { dashboardStore } from '../../store/stores'
 
 export default function SearchPanel() {
 	const [searchQuery, setSearchQuery] = useState('')
-	const [selectedTab, setSelectedTab] = useState('all')
+	// const [selectedTab, setSelectedTab] = useState('all')
 	const [pageNo, setPageNo] = useState(0)
 	const [movies, setMovies] = useState([])
+	const [loading, setLoading] = useState(false)
 
 	function handleSearch() {
 		dashboardStore.fetchSearch(searchQuery, selectedTab, pageNo).then((data) => {
@@ -28,7 +29,7 @@ export default function SearchPanel() {
 			<div className={styles['header']}>
 				<div className={styles['title-wrapper']}>
 					<span className={styles['header-title']}>Search</span>
-					<Tabs
+					{/* <Tabs
 						tabs={[
 							{ name: 'All', value: 'all' },
 							{ name: 'Movies', value: 'movies' },
@@ -36,7 +37,7 @@ export default function SearchPanel() {
 						]}
 						selectedTab={selectedTab}
 						onChange={setSelectedTab}
-					/>
+					/> */}
 				</div>
 				<div className={styles['controls-wrapper']}>
 					<TextBox
@@ -51,7 +52,7 @@ export default function SearchPanel() {
 			</div>
 
 			<div className={styles['content']}>
-				<MovieGrid movies={movies} />
+				<MovieGrid movies={movies} loading={loading} />
 			</div>
 		</div>
 	)

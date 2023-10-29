@@ -10,6 +10,7 @@ import MovieModal from '../components/common/MovieModal'
 import AddToListModal from '../components/common/AddToListModal'
 import DeleteList from '../components/DashboardPage/DeleteList'
 import QuickSearch from '../components/DashboardPage/QuickSearch'
+import YoutubePlayer from '../components/DashboardPage/YoutubePlayer'
 
 import styles from './DashboardPage.module.css'
 
@@ -37,6 +38,7 @@ const DashboardPage = observer(() => {
 				<FiltersPanel />
 			</div>
 			<div className={`${styles['modal-container']} ${getModalComponent() ? styles['show-modal-container'] : ''}`}>{getModalComponent()}</div>
+			<div className={`${styles['modal-container']} ${dashboardStore.youtubeVideo ? styles['show-modal-container'] : ''}`}>{<YoutubePlayer />}</div>
 		</div>
 	)
 })

@@ -1,0 +1,12 @@
+.youtube-player {
+	background: var(--app-bg), var(--card-bg) !important;
+	box-shadow: 0 3rem 12rem #ffffff75;
+}
+
+.player {
+	border: var(--border-grey);
+	width: 64vw;
+	height: 36vw;
+	background-color: var(--bg-color);
+	box-shadow: 0 1rem 12rem var(--yellow);
+}

@@ -1,7 +1,7 @@
 .context-menu {
 	border-radius: var(--radius-md);
 	overflow: hidden;
-	background: var(--app-bg) var(--card-bg);
+	background: var(--app-bg), var(--card-bg);
 	width: 200px;
 	padding: 6px;
 	position: relative;

@@ -39,3 +39,13 @@ body,
 	border: var(--card-border);
 	pointer-events: none;
 }
+
+::-webkit-scrollbar {
+	width: 4px;
+	height: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+	background-color: var(--scroll-bar-color);
+	border-radius: 100px;
+}
