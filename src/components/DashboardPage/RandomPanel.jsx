@@ -18,7 +18,7 @@ export default function RandomPanel() {
 				</div>
 			</div>
 			<div className={styles['content']}>
-				<MovieContent />
+				<MovieContent loading={true} />
 			</div>
 		</div>
 	)

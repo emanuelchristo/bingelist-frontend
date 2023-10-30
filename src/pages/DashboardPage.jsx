@@ -1,25 +1,28 @@
+import { useEffect } from 'react'
 import { observer } from 'mobx-react-lite'
 import { dashboardStore } from '../store/stores'
 import { Outlet } from 'react-router-dom'
+
 import FiltersPanel from '../components/DashboardPage/FiltersPanel'
 import Navbar from '../components/DashboardPage/Navbar'
 import WaFaPanel from '../components/DashboardPage/WaFaPanel'
 import YourListsPanel from '../components/DashboardPage/YourListsPanel'
-import CreateList from '../components/DashboardPage/CreateList'
+import CreateListModal from '../components/DashboardPage/CreateListModal'
 import MovieModal from '../components/common/MovieModal'
 import AddToListModal from '../components/common/AddToListModal'
-import DeleteList from '../components/DashboardPage/DeleteList'
+import DeleteListModal from '../components/DashboardPage/DeleteListModal'
 import QuickSearch from '../components/DashboardPage/QuickSearch'
-import YoutubePlayer from '../components/DashboardPage/YoutubePlayer'
+import YoutubeModal from '../components/DashboardPage/YoutubeModal'
 
 import styles from './DashboardPage.module.css'
 
 const DashboardPage = observer(() => {
+	useEffect(() => {
+		dashboardStore.fetchLists()
+	}, [])
+
 	function getModalComponent() {
-		if (dashboardStore.showCreateList) return <CreateList />
-		if (dashboardStore.showMovieModal) return <MovieModal />
 		if (dashboardStore.showAddToListModal) return <AddToListModal />
-		if (dashboardStore.showDeleteList) return <DeleteList />
 		if (dashboardStore.showQuickSearch) return <QuickSearch />
 		return null
 	}
@@ -37,8 +40,11 @@ const DashboardPage = observer(() => {
 			<div className={styles['right-section']}>
 				<FiltersPanel />
 			</div>
-			<div className={`${styles['modal-container']} ${getModalComponent() ? styles['show-modal-container'] : ''}`}>{getModalComponent()}</div>
-			<div className={`${styles['modal-container']} ${dashboardStore.youtubeVideo ? styles['show-modal-container'] : ''}`}>{<YoutubePlayer />}</div>
+
+			<CreateListModal />
+			<DeleteListModal />
+			<MovieModal />
+			<YoutubeModal />
 		</div>
 	)
 })

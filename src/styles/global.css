@@ -38,6 +38,7 @@ body,
 	border-radius: var(--radius-lg);
 	border: var(--card-border);
 	pointer-events: none;
+	z-index: 99;
 }
 
 ::-webkit-scrollbar {

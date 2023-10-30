@@ -22,7 +22,7 @@ const MovieGridItem = observer(({ data, inList }) => {
 			<div
 				className={styles['poster']}
 				style={{ backgroundImage: `url('${data?.poster_path}')` }}
-				onClick={() => dashboardStore.handleMovieClick({ id: data?.id, media_type: data?.media_type })}
+				onClick={() => dashboardStore.showMovieModal({ id: data?.id, media_type: data?.media_type })}
 			></div>
 			<div className={styles['content']}>
 				<div className={styles['controls']}>
@@ -41,7 +41,10 @@ const MovieGridItem = observer(({ data, inList }) => {
 						{!inList && <ListAddSvg className={styles['playlist-icon']} />}
 					</div>
 				</div>
-				<div className={styles['content-bottom']} onClick={() => dashboardStore.handleMovieClick({ id: data?.id, media_type: data?.media_type })}>
+				<div
+					className={styles['content-bottom']}
+					onClick={() => dashboardStore.handleMovieClick({ id: data?.id, media_type: data?.media_type })}
+				>
 					<span className={styles['title']}>{data?.title ?? '--'}</span>
 					<span className={styles['year']}>{data?.release_date?.slice(0, 4) || '--'}</span>
 					<div className='flex items-center gap-[6px]'>

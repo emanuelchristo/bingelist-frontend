@@ -2,7 +2,14 @@ import { useRef, useEffect, useState } from 'react'
 
 import styles from './ListItem.module.css'
 
-export default function ListItem({ emoji, name, count, noHoverAnim, selected, onClick }) {
+export default function ListItem({
+	emoji = '❌',
+	name = '--',
+	count = '--',
+	noHoverAnim,
+	selected,
+	onClick = () => {},
+}) {
 	const itemRef = useRef()
 
 	const [clicked, setClicked] = useState(false)
@@ -18,7 +25,9 @@ export default function ListItem({ emoji, name, count, noHoverAnim, selected, on
 
 	return (
 		<div
-			className={`${styles['list-item']} ${selected ? styles['selected'] : ''} ${noHoverAnim ? styles['no-hover-anim'] : ''}`}
+			className={`${styles['list-item']} ${selected ? styles['selected'] : ''} ${
+				noHoverAnim ? styles['no-hover-anim'] : ''
+			}`}
 			onClick={() => {
 				setClicked(true)
 				onClick()

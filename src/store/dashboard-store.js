@@ -1,5 +1,6 @@
 import { makeAutoObservable } from 'mobx'
 import axios from 'axios'
+import { defaults } from './default-states'
 // import { googleSignIn } from '../utils/google-auth'
 
 const BACKEND_URL = import.meta.env.VITE_BACKEND_URL
@@ -45,12 +46,25 @@ function genAuthHeaders() {
 }
 
 class DashboardStore {
-	lists = [
-		// { listId: 1, name: 'Thrillers 90s', count: 5, emoji: '🔥' },
-		// { listId: 2, name: 'Romance', count: 32, emoji: '💗' },
-		// { listId: 3, name: 'Neo Noir', count: 14, emoji: '🎞️' },
-		// { listId: 4, name: 'Slow Burn', count: 8, emoji: '✏️' },
-	]
+	/* Lists */
+	lists = defaults.lists
+	showCreateList = false
+	createListState = 'none'
+	editListId = null
+	showDeleteList = false
+	deleteListId = null
+	deleteListState = 'none'
+
+	/* Discover */
+	discover = defaults.discover
+
+	/* Watched faved */
+	waFaStatus = {}
+
+	/* Movie details */
+	showMovieDetailsModal = false
+	movieDetails = defaults.movieDetails
+	youtubeVideo = null
 
 	filterSettings = {
 		sortOptions: [
@@ -100,43 +114,184 @@ class DashboardStore {
 	filtersChanged = false
 	appliedFilters = { ...defaultFilters }
 
-	discover = null
-
-	showCreateList = false
-	showDeleteList = false
-	showMovieModal = false
 	showAddToListModal = false
 	showQuickSearch = false
 
-	youtubeVideo = null
 	movieModalId = null
-	deleteListId = null
 	addToListMovieId = null
-	editListId = null
 	quickSearchPromise = null
-
-	waFaStatus = {}
-
-	popularTab = 'movies'
-	upcomingTab = 'movies'
 
 	constructor() {
 		makeAutoObservable(this)
 	}
 
-	// WATCHED FAVED
-	updateMovieWaFa = (movieList) => {
-		const temp = movieList.map((item) => {
-			return { id: item.id, media_type: item.media_type }
-		})
+	/* LISTS ACTIONS */
+	fetchLists = async () => {
+		try {
+			this.lists.fetchState = 'loading'
+			const { data } = await axios.get(BACKEND_URL + '/lists', { headers: genAuthHeaders() })
+			this.lists = { ...data, fetchState: 'success' }
+		} catch (err) {
+			console.error('Failed to fetch lists')
+			this.lists = { ...defaults.lists, fetchState: 'error' }
+		}
+	}
 
-		axios
-			.post(BACKEND_URL + '/watched_or_faved', {
-				movieList: temp,
+	getSortedYourLists = () => {
+		const temp = this.lists.yourLists.filter(() => 1)
+		temp.sort((a, b) => a.name.localeCompare(b.name))
+		return temp
+	}
+
+	getListById = (listId) => {
+		const res = this.lists.yourLists.find((item) => item.listId == listId)
+
+		if (res) return res
+		if (this.lists.watched?.listId === listId) return this.lists.watched
+		if (this.lists.favourites?.listId === listId) return this.lists.favourites
+	}
+
+	/* Create list */
+	createNewList = () => {
+		this.showCreateList = true
+		this.createListState = 'none'
+	}
+
+	cancelCreateList = () => {
+		this.showCreateList = false
+		this.createListState = 'none'
+	}
+
+	okCreateList = async ({ emoji, title }) => {
+		try {
+			this.createListState = 'loading'
+
+			const { data } = await axios.post(BACKEND_URL + '/create_list', null, {
+				headers: genAuthHeaders(),
+				params: { listName: title, listEmoji: emoji },
 			})
-			.then(({ data }) => {
-				this.waFaStatus = { ...this.waFaStatus, ...data }
+
+			this.lists.yourLists.push(data)
+			this.createListState = 'none'
+			this.showCreateList = false
+
+			window.location = '/dashboard/list/' + data.listId
+		} catch (err) {
+			console.error('Failed to create list')
+			this.createListState = 'error'
+		}
+	}
+
+	/* Edit list */
+	editList = (listId) => {
+		this.showCreateList = true
+		this.editListId = listId
+		this.createListState = 'none'
+	}
+
+	cancelEditList = () => {
+		this.showCreateList = false
+		this.editListId = null
+		this.createListState = 'none'
+	}
+
+	okEditList = async ({ title, emoji }) => {
+		try {
+			this.createListState = 'loading'
+
+			const { data } = await axios.post(BACKEND_URL + '/edit_list', null, {
+				headers: genAuthHeaders(),
+				params: { listId: this.editListId, listName: title, listEmoji: emoji },
 			})
+
+			const temp = this.lists.yourLists.filter((item) => item.listId != this.editListId)
+			temp.push(data)
+
+			this.lists = { ...this.lists, yourLists: temp }
+
+			this.createListState = 'none'
+			this.showCreateList = false
+			this.editListId = null
+		} catch (err) {
+			console.error('Failed to edit list')
+			this.createListState = 'error'
+		}
+	}
+
+	/* Delete list */
+	deleteList = (listId) => {
+		this.showDeleteList = true
+		this.deleteListId = listId
+		this.deleteListState = 'none'
+	}
+
+	cancelDeleteList = () => {
+		this.showDeleteList = false
+		this.deleteListId = null
+		this.deleteListState = 'none'
+	}
+
+	okDeleteList = async () => {
+		try {
+			this.deleteListState = 'loading'
+
+			await axios.post(BACKEND_URL + '/delete_list', null, {
+				headers: genAuthHeaders(),
+				params: { listId: this.deleteListId },
+			})
+
+			const temp = this.lists.yourLists.filter((item) => item.listId != this.deleteListId)
+			this.lists = temp
+
+			this.showDeleteList = false
+			this.deleteListId = null
+			this.deleteListState = 'success'
+			window.location = '/dashboard/discover'
+		} catch (err) {
+			console.error('Failed to delete list')
+			this.deleteListState = 'error'
+		}
+	}
+
+	/* DISCOVER ACTIONS */
+	fetchDiscover = async () => {
+		try {
+			this.discover.fetchState = 'loading'
+
+			const { data } = await axios.get(BACKEND_URL + '/discover')
+
+			// Fetching watched faved status
+			const merged = [
+				...data.trending,
+				...data.popular.tv,
+				...data.popular.movies,
+				...data.upcoming.movies,
+				...data.upcoming.tv,
+			]
+			this.updateMovieWaFa(merged)
+
+			this.discover = { ...data, fetchState: 'success' }
+		} catch (err) {
+			console.error('Failed to fetch discover')
+			this.discover = { ...defaults.discover, fetchState: 'error' }
+		}
+	}
+
+	/* WATCHED FAVED */
+	updateMovieWaFa = async (movieList) => {
+		try {
+			const movieIds = movieList.map((item) => {
+				return { id: item.id, media_type: item.media_type }
+			})
+
+			const { data } = await axios.post(BACKEND_URL + '/watched_or_faved', {
+				movieList: movieIds,
+			})
+
+			this.waFaStatus = { ...this.waFaStatus, ...data }
+		} catch (err) {
+			console.error('Failed to update watched faved status')
+		}
 	}
 
 	getMovieWaFa = (movieId) => {
@@ -144,31 +299,82 @@ class DashboardStore {
 		return this.waFaStatus[key] ?? null
 	}
 
-	favMovie = (movieId) => {
-		axios
-			.post(BACKEND_URL + '/add_to_favlist', null, {
+	favMovie = async (movieId) => {
+		try {
+			const { data } = await axios.post(BACKEND_URL + '/add_to_favlist', null, {
 				params: {
 					...movieId,
 				},
 			})
-			.then(({ data }) => {
-				this.waFaStatus = { ...this.waFaStatus, ...data }
-			})
-			.catch(console.error)
+
+			this.waFaStatus = { ...this.waFaStatus, ...data }
+		} catch (err) {
+			console.error('Failed to favourite')
+		}
 	}
 
-	watchedMovie = (movieId) => {
-		axios
-			.post(BACKEND_URL + '/add_to_watchlist', null, {
+	watchedMovie = async (movieId) => {
+		try {
+			const { data } = await axios.post(BACKEND_URL + '/add_to_watchlist', null, {
 				params: {
 					...movieId,
 				},
 			})
-			.then(({ data }) => {
-				console.log(data)
-				this.waFaStatus = { ...this.waFaStatus, ...data }
-			})
-			.catch(console.error)
+
+			this.waFaStatus = { ...this.waFaStatus, ...data }
+		} catch (err) {
+			console.error('Failed to mark movie as watched')
+		}
+	}
+
+	/* MOVIE ACTIONS */
+	showMovieModal = async (movieId) => {
+		try {
+			this.showMovieDetailsModal = true
+
+			this.movieDetails = {
+				details: null,
+				fetchState: 'loading',
+			}
+
+			const { data } = await axios.get(BACKEND_URL + '/movie_details', { params: movieId, headers: genAuthHeaders() })
+
+			this.movieDetails = {
+				details: data,
+				fetchState: 'success',
+			}
+		} catch (err) {
+			console.error('Failed to fetch movie details')
+			this.movieDetails = {
+				details: null,
+				fetchState: 'error',
+			}
+		}
+	}
+
+	closeMovieModal = () => {
+		this.showMovieDetailsModal = false
+		this.movieDetails = { details: null, fetchState: 'none' }
+	}
+
+	playTrailer = (trailerUrl) => {
+		this.youtubeVideo = trailerUrl
+	}
+
+	closeYoutubeModal = () => {
+		this.youtubeVideo = null
+	}
+
+	handleAddToListClick = (movieId) => {
+		this.showAddToListModal = true
+		this.addToListMovieId = movieId
+	}
+
+	handleAddToListOk = (movieId, listIds) => {}
+
+	handleAddToListCancel = () => {
+		this.addToListMovieId = null
+		this.showAddToListModal = false
 	}
 
 	// GOOGLE AUTH
@@ -202,14 +408,14 @@ class DashboardStore {
 			if (!inDashboard) window.location = '/dashboard/discover'
 		}
 
-		axios.post(BACKEND_URL + '/sign_in', { jwt: jwt }).then(({ data }) => {
-			data = { valid: true }
-			if (!data.valid) {
-				if (inDashboard) window.location = '/'
-			} else {
-				if (!inDashboard) window.location = '/dashboard/discover'
-			}
-		})
+		// axios.post(BACKEND_URL + '/sign_in', { jwt: jwt }).then(({ data }) => {
+		// 	data = { valid: true }
+		// 	if (!data.valid) {
+		// 		if (inDashboard) window.location = '/'
+		// 	} else {
+		// 		if (!inDashboard) window.location = '/dashboard/discover'
+		// 	}
+		// })
 	}
 
 	// QUICK SEARCH
@@ -251,23 +457,6 @@ class DashboardStore {
 		})
 	}
 
-	// DISCOVER
-	fetchDiscover = () => {
-		axios.get(BACKEND_URL + '/discover').then(({ data }) => {
-			// Fetching watched faved status
-			const merged = [
-				...data.trending,
-				...data.popular.tv,
-				...data.popular.movies,
-				...data.upcoming.movies,
-				...data.upcoming.tv,
-			]
-			this.updateMovieWaFa(merged)
-
-			this.discover = data
-		})
-	}
-
 	// FILTERS
 	handleFilterChange = (key, val) => {
 		if (key === 'genres') {
@@ -301,161 +490,6 @@ class DashboardStore {
 	resetFilter = () => {
 		this.filters = { ...defaultFilters }
 		this.appliedFilters = { ...defaultFilters }
-	}
-
-	// LISTS
-	fetchLists = () => {
-		return new Promise((resolve, reject) => {
-			try {
-				axios.get(BACKEND_URL + '/lists', { headers: genAuthHeaders() }).then(({ data }) => {
-					this.lists = data
-					resolve()
-				})
-			} catch (err) {
-				console.error(err)
-				reject()
-			}
-		})
-	}
-
-	getLists = () => {
-		if (!(this.lists instanceof Array)) return []
-		const temp = this.lists.filter(() => 1)
-		temp.sort((a, b) => a.name.localeCompare(b.name))
-		return temp
-	}
-
-	getListById = (listId) => {
-		return this.lists.find((item) => item.listId == listId)
-	}
-
-	handleListItemClick = (listId) => {
-		this.selectedListId = listId
-	}
-
-	createNewList = () => {
-		this.showCreateList = true
-	}
-
-	cancelCreateList = () => {
-		this.showCreateList = false
-	}
-
-	okCreateList = ({ emoji, title }) => {
-		axios
-			.post(BACKEND_URL + '/create_list', null, {
-				headers: genAuthHeaders(),
-				params: { listName: title, listEmoji: emoji },
-			})
-			.then(({ data }) => {
-				this.showCreateList = false
-				this.lists.push(data)
-				this.selectedListId = data.listId
-				window.location = '/dashboard/list/' + data.listId
-			})
-	}
-
-	editList = (listId) => {
-		this.showCreateList = true
-		this.editListId = listId
-	}
-
-	cancelEditList = () => {
-		this.showCreateList = false
-		this.editListId = null
-	}
-
-	okEditList = ({ title, emoji }) => {
-		axios
-			.post(BACKEND_URL + '/edit_list', null, {
-				headers: genAuthHeaders(),
-				params: { listId: this.editListId, listName: title, listEmoji: emoji },
-			})
-			.then(({ data }) => {
-				const temp = this.lists.filter((item) => item.listId != this.editListId)
-				temp.push(data)
-				this.lists = temp
-				this.showCreateList = false
-				this.editListId = null
-			})
-	}
-
-	deleteList = (listId) => {
-		this.deleteListId = listId
-		this.showDeleteList = true
-	}
-
-	cancelDeleteList = () => {
-		this.deleteListId = null
-		this.showDeleteList = false
-	}
-
-	okDeleteList = () => {
-		axios
-			.post(BACKEND_URL + '/delete_list', null, { headers: genAuthHeaders(), params: { listId: this.deleteListId } })
-			.then(({ data }) => {
-				if (data.deleted) {
-					const temp = this.lists.filter((item) => item.listId != this.deleteListId)
-					this.lists = temp
-					this.deleteListId = null
-					this.showDeleteList = false
-					window.location = '/dashboard/discover'
-				}
-			})
-	}
-
-	// MOVIE
-	fetchMovieDetails = (movieId) => {
-		return new Promise(async (resolve) => {
-			try {
-				axios.get(BACKEND_URL + '/movie_details', { params: movieId, headers: genAuthHeaders() }).then(({ data }) => {
-					if (data) resolve(data)
-					else resolve(null)
-				})
-			} catch (err) {
-				console.error(err)
-				resolve(null)
-			}
-		})
-	}
-
-	handleMovieClick = (movieId) => {
-		this.showMovieModal = true
-		this.movieModalId = movieId
-	}
-
-	cancelMovieModal = () => {
-		this.showMovieModal = false
-		this.movieModalId = null
-	}
-
-	handleAddToListClick = (movieId) => {
-		this.showAddToListModal = true
-		this.addToListMovieId = movieId
-	}
-
-	handleAddToListOk = (movieId, listIds) => {}
-
-	handleAddToListCancel = () => {
-		this.addToListMovieId = null
-		this.showAddToListModal = false
-	}
-
-	playTrailer = (trailerUrl) => {
-		this.youtubeVideo = trailerUrl
-	}
-
-	closeYoutubePlayer = () => {
-		this.youtubeVideo = null
-	}
-
-	// DISCOVER PAGE
-	handlePopularTabChange = (value) => {
-		this.popularTab = value
-	}
-
-	handleUpcomingTabChange = (value) => {
-		this.upcomingTab = value
 	}
 }
 

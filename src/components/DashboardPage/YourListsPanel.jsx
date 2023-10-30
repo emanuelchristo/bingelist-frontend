@@ -1,4 +1,3 @@
-import { useEffect, useState } from 'react'
 import { dashboardStore } from '../../store/stores'
 import { observer } from 'mobx-react-lite'
 import { useParams } from 'react-router-dom'
@@ -14,13 +13,6 @@ import styles from './YourListsPanel.module.css'
 
 const YourListsPanel = observer(() => {
 	const { listId } = useParams()
-	const [loading, setLoading] = useState(true)
-
-	useEffect(() => {
-		dashboardStore.fetchLists().then(() => {
-			setLoading(false)
-		})
-	}, [])
 
 	return (
 		<div className={styles['your-lists-panel'] + ' card'}>
@@ -31,23 +23,16 @@ const YourListsPanel = observer(() => {
 				</div>
 				<IconButton icon={<AddSvg />} onClick={dashboardStore.createNewList} />
 			</div>
-			{loading ? (
+			{dashboardStore.lists.fetchState !== 'success' ? (
 				<div className={styles['loading-wrapper']}>
 					<Spinner />
 				</div>
-			) : dashboardStore.getLists()?.length > 0 ? (
+			) : dashboardStore.getSortedYourLists().length > 0 ? (
 				<div className={styles['lists-container']}>
 					<div className={styles['lists-wrapper']}>
-						{dashboardStore.getLists().map((item) => (
+						{dashboardStore.getSortedYourLists().map((item) => (
 							<Link to={`/dashboard/list/${item.listId}`} key={item.listId}>
-								<ListItem
-									emoji={item.emoji}
-									name={item.name}
-									count={item.count}
-									id={item.listId}
-									selected={listId == item.listId}
-									onClick={() => {}}
-								/>
+								<ListItem emoji={item.emoji} name={item.name} count={item.count} selected={listId == item.listId} />
 							</Link>
 						))}
 					</div>

@@ -1,8 +1,10 @@
+import { Link } from 'react-router-dom'
 import { observer } from 'mobx-react-lite'
 import { useParams } from 'react-router-dom'
-import { Link } from 'react-router-dom'
+import { dashboardStore } from '../../store/stores'
 
 import ListItem from '../common/ListItem'
+import Spinner from '../common/Spinner'
 
 import styles from './WaFaPanel.module.css'
 
@@ -11,12 +13,30 @@ const WaFaPanel = observer(() => {
 
 	return (
 		<div className={styles['wa-fa-panel'] + ' card'}>
-			<Link to={`/dashboard/list/watched`}>
-				<ListItem emoji='✅' name='Watched' count={432} id='watched' selected={listId === 'watched'} />
-			</Link>
-			<Link to={`/dashboard/list/favourites`}>
-				<ListItem emoji='❤️' name='Favourites' count={10} id='favourites' selected={listId === 'favourites'} />
-			</Link>
+			{dashboardStore.lists.fetchState === 'success' ? (
+				<>
+					<Link to={`/dashboard/list/${dashboardStore.lists.watched?.listId}`}>
+						<ListItem
+							emoji={dashboardStore.lists.watched?.emoji}
+							name={dashboardStore.lists.watched?.name}
+							count={dashboardStore.lists.watched?.count}
+							selected={listId === dashboardStore.lists.watched?.listId}
+						/>
+					</Link>
+					<Link to={`/dashboard/list/${dashboardStore.lists.favourites?.listId}`}>
+						<ListItem
+							emoji={dashboardStore.lists.favourites?.emoji}
+							name={dashboardStore.lists.favourites?.name}
+							count={dashboardStore.lists.favourites?.count}
+							selected={listId === dashboardStore.lists.favourites?.listId}
+						/>
+					</Link>
+				</>
+			) : (
+				<div className={styles['loading-wrapper']}>
+					<Spinner />
+				</div>
+			)}
 		</div>
 	)
 })

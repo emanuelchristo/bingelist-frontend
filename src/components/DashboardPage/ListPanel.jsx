@@ -42,11 +42,13 @@ export default function ListPanel() {
 			<div className={styles['header']}>
 				<div className={styles['list-heading']}>
 					<div className={styles['emoji-wrapper']}>
-						<span>{details?.emoji}</span>
+						<span>{details?.emoji ?? '❌'}</span>
 					</div>
 					<div className={styles['text-wrapper']}>
-						<span className={styles['name']}>{details?.name}</span>
-						<span className={styles['count']}>{`${details?.count} ${details?.count == 1 ? 'item' : 'items'}`}</span>
+						<span className={styles['name']}>{details?.name ?? '--'}</span>
+						<span className={styles['count']}>{`${details?.count ?? '--'} ${
+							details?.count == 1 ? 'item' : 'items'
+						}`}</span>
 					</div>
 					<div className={styles['more-container']}>
 						<IconButton icon={<MoreSvg />} onClick={() => setShowMoreMenu(true)} />

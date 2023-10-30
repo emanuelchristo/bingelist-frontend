@@ -1,5 +1,5 @@
 import { dashboardStore } from '../../store/stores'
-import { formatGenres, formatMediaType, formatRating, formatDuration } from '../../utils/movie-format'
+import { formatGenres, formatMediaType, formatRating, formatDuration, getFlagEmoji } from '../../utils/movie-format'
 
 import CastItem from './CastItem'
 import Spinner from './Spinner'
@@ -10,8 +10,8 @@ import Imdb from '/src/assets/logos/imdb.svg'
 
 import styles from './MovieContent.module.css'
 
-export default function MovieContent({ data }) {
-	if (!data)
+export default function MovieContent({ data, loading }) {
+	if (loading)
 		return (
 			<div className={styles['loading-wrapper']}>
 				<Spinner />
@@ -45,11 +45,15 @@ export default function MovieContent({ data }) {
 							</div>
 							<div className={styles['separator']}></div>
 							<div className={styles['country-wrapper']}>
-								<span className={styles['flag']}>🏳️</span>
+								<span className={styles['flag']}>{getFlagEmoji(data?.country) ?? '🏳️'}</span>
 								<span>{data?.language?.name || '--'}</span>
 							</div>
 						</div>
-						<button className={styles['trailer-button']} disabled={!data?.trailer_url} onClick={() => dashboardStore.playTrailer(data?.trailer_url)}>
+						<button
+							className={styles['trailer-button']}
+							disabled={!data?.trailer_url}
+							onClick={() => dashboardStore.playTrailer(data?.trailer_url)}
+						>
 							<PlaySvg className={styles['play-icon']} />
 							<span>Play trailer</span>
 						</button>
