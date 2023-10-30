@@ -202,14 +202,14 @@ class DashboardStore {
 			if (!inDashboard) window.location = '/dashboard/discover'
 		}
 
-		// axios.post(BACKEND_URL + '/verify_jwt', { jwt: jwt }).then(({ data }) => {
-		// 	data = { valid: true }
-		// 	if (!data.valid) {
-		// 		if (inDashboard) window.location = '/'
-		// 	} else {
-		// 		if (!inDashboard) window.location = '/dashboard/discover'
-		// 	}
-		// })
+		axios.post(BACKEND_URL + '/sign_in', { jwt: jwt }).then(({ data }) => {
+			data = { valid: true }
+			if (!data.valid) {
+				if (inDashboard) window.location = '/'
+			} else {
+				if (!inDashboard) window.location = '/dashboard/discover'
+			}
+		})
 	}
 
 	// QUICK SEARCH
@@ -408,7 +408,7 @@ class DashboardStore {
 	fetchMovieDetails = (movieId) => {
 		return new Promise(async (resolve) => {
 			try {
-				axios.get(BACKEND_URL + '/movie_details', { params: movieId }).then(({ data }) => {
+				axios.get(BACKEND_URL + '/movie_details', { params: movieId, headers: genAuthHeaders() }).then(({ data }) => {
 					if (data) resolve(data)
 					else resolve(null)
 				})

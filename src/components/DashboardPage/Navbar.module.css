@@ -4,6 +4,7 @@
 	justify-content: space-between;
 	height: 58px;
 	padding: 0 var(--spacing-xl);
+	overflow: visible !important;
 }
 
 .nav-items-wrapper {
@@ -53,4 +54,15 @@
 
 .avatar-initials {
 	font-size: var(--font-size-lg);
+}
+
+.more-container {
+	position: relative;
+}
+
+.more-menu-wrapper {
+	position: absolute;
+	right: 0;
+	top: 40px;
+	z-index: 99;
 }
