@@ -81,6 +81,10 @@
 	-moz-appearance: none;
 }
 
+.select option {
+	color: var(--text-dark);
+}
+
 .select input::placeholder {
 	color: var(--text-lighter);
 }

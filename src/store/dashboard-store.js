@@ -70,6 +70,9 @@ class DashboardStore {
 	/* Discover */
 	discover = defaults.discover
 
+	/* Browse */
+	browse = defaults.browse
+
 	/* Watched faved */
 	waFaStatus = {}
 
@@ -114,7 +117,6 @@ class DashboardStore {
 		try {
 			const { data } = await axios.get(BACKEND_URL + '/filter_settings')
 
-			console.log(data)
 			this.filtersConfig = { ...data, fetchState: 'success' }
 		} catch (err) {
 			console.error('Failed to fetch filter settings')
@@ -123,20 +125,20 @@ class DashboardStore {
 
 	handleFilterChange = (key, val) => {
 		if (key === 'genres') {
-			if (this.filters.genres.includes(val)) {
-				const newGenres = this.filters.genres.filter((item) => item !== val)
-				this.filters = { ...this.filters, genres: newGenres }
-			} else this.filters.genres.push(val)
+			if (this.currFilters.genres.includes(val)) {
+				const newGenres = this.currFilters.genres.filter((item) => item !== val)
+				this.currFilters = { ...this.currFilters, genres: newGenres }
+			} else this.currFilters.genres.push(val)
 		} else if (key === 'year-from') {
-			if (val > this.filters.year.to) return
-			this.filters.year.from = val
+			if (val > this.currFilters.yearTo) return
+			this.currFilters.yearFrom = val
 		} else if (key === 'year-to') {
-			if (val < this.filters.year.from) return
-			this.filters.year.to = val
+			if (val < this.currFilters.yearFrom) return
+			this.currFilters.yearTo = val
 		} else if (key === 'adult') {
-			this.filters.adult = !this.filters.adult
+			this.currFilters.adult = !this.currFilters.adult
 		} else {
-			this.filters[key] = val
+			this.currFilters[key] = val
 		}
 		this.filtersChanged = true
 	}
@@ -148,20 +150,31 @@ class DashboardStore {
 	}
 
 	applyFilters = (page) => {
-		if (page === 'browse') this.appliedBrowseFilters = this.currFilters
-		else if (page === 'random') this.appliedRandomFilters = this.currFilters
-		else if (page === 'list') this.appliedListFilters = this.currFilters
+		if (page === 'browse') {
+			this.appliedBrowseFilters = JSON.parse(JSON.stringify(this.currFilters))
+			this.browse = defaults.browse
+			this.fetchBrowse()
+		} else if (page === 'random') this.appliedRandomFilters = JSON.parse(JSON.stringify(this.currFilters))
+		else if (page === 'list') this.appliedListFilters = JSON.parse(JSON.stringify(this.currFilters))
 
 		this.filtersChanged = false
 	}
 
 	resetFilter = (page) => {
-		this.filters = { ...defaultFilters }
-		this.appliedFilters = { ...defaultFilters }
-
-		if (page === 'browse') this.appliedBrowseFilters = this.currFilters
-		else if (page === 'random') this.appliedRandomFilters = this.currFilters
-		else if (page === 'list') this.appliedListFilters = this.currFilters
+		if (page === 'browse') {
+			const temp = JSON.stringify(this.filtersConfig.browse.defaultFilters)
+			this.appliedBrowseFilters = JSON.parse(temp)
+			this.currFilters = JSON.parse(temp)
+			this.fetchBrowse()
+		} else if (page === 'random') {
+			const temp = JSON.stringify(this.filtersConfig.random.defaultFilters)
+			this.appliedRandomFilters = JSON.parse(temp)
+			this.currFilters = JSON.parse(temp)
+		} else if (page === 'list') {
+			const temp = JSON.stringify(this.filtersConfig.list.defaultFilters)
+			this.appliedListFilters = JSON.parse(temp)
+			this.currFilters = JSON.parse(temp)
+		}
 
 		this.filtersChanged = false
 	}
@@ -489,7 +502,7 @@ class DashboardStore {
 		}
 	}
 
-	/* DISCOVER ACTIONS */
+	/* DISCOVER */
 	fetchDiscover = async () => {
 		try {
 			this.discover.fetchState = 'loading'
@@ -513,7 +526,34 @@ class DashboardStore {
 		}
 	}
 
-	/* MOVIE ACTIONS */
+	/* BROWSE */
+	fetchBrowse = async () => {
+		try {
+			this.browse.fetchState = 'loading'
+
+			const { data } = await axios.post(
+				BACKEND_URL + '/browse',
+				{ filters: this.appliedBrowseFilters },
+				{ params: { pageNo: this.browse.currPage } }
+			)
+
+			this.updateMovieWaFa(data.movies)
+
+			if (data.currPage !== this.browse.currPage) return
+
+			this.browse = {
+				movies: [...this.browse.movies, ...data.movies],
+				currPage: data.currPage + 1,
+				totalPages: data.totalPages,
+				fetchState: 'success',
+			}
+		} catch (err) {
+			this.browse.fetchState = 'error'
+			console.err('Failed to fetch browse')
+		}
+	}
+
+	/* MOVIE */
 	showMovieModal = async (movieId) => {
 		try {
 			this.showMovieDetailsModal = true
@@ -552,7 +592,7 @@ class DashboardStore {
 		this.youtubeVideo = null
 	}
 
-	/* GOOGLE AUTH ACTIONS */
+	/* GOOGLE AUTH */
 	handleGoogleLogin = (response) => {
 		const jwt = response.credential
 		window.localStorage.setItem('jwt', jwt)

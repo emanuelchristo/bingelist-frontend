@@ -6,9 +6,8 @@ import { useLocation } from 'react-router-dom'
 import FilterSvg from '/src/assets/icons/filter.svg?react'
 import SortSvg from '/src/assets/icons/sort.svg?react'
 import TimerSvg from '/src/assets/icons/timer.svg?react'
+import FiltersDisabledSvg from '/src/assets/icons/filters-disabled.svg?react'
 import LanguageSvg from '/src/assets/icons/language.svg?react'
-import ImdbSvg from '/src/assets/logos/imdb.svg'
-import RTSvg from '/src/assets/logos/rt.svg'
 import RatingIcon from '/src/assets/logos/rating.png'
 
 import Toggle from '../common/Toggle'
@@ -34,26 +33,39 @@ const FiltersPanel = observer(() => {
 			dashboardStore.filtersActive = false
 			dashboardStore.filtersDisabled = true
 			setFiltersSettings(null)
+			setFiltersActive(false)
 			dashboardStore.currFilters = null
 			return
 		}
 
 		if (dashboardStore.filtersConfig.fetchState !== 'success') return
 
-		const currFiltersSettings = dashboardStore.filtersConfig[page].filtersSettings
+		dashboardStore.filtersDisabled = false
+
+		const currFiltersSettings = { ...dashboardStore.filtersConfig[page].filtersSettings }
 		setFiltersSettings(currFiltersSettings)
 
 		if (page === 'browse') {
-			dashboardStore.appliedBrowseFilters = dashboardStore.filtersConfig.browse.defaultFilters
-			dashboardStore.currFilters = { ...dashboardStore.appliedBrowseFilters }
+			if (!dashboardStore.appliedBrowseFilters)
+				dashboardStore.appliedBrowseFilters = JSON.parse(
+					JSON.stringify(dashboardStore.filtersConfig.browse.defaultFilters)
+				)
+			dashboardStore.currFilters = JSON.parse(JSON.stringify(dashboardStore.appliedBrowseFilters))
+			dashboardStore.filtersChanged = false
 			setFiltersActive(dashboardStore.browseFiltersActive)
 		} else if (page === 'random') {
-			dashboardStore.appliedRandomFilters = dashboardStore.filtersConfig.random.defaultFilters
-			dashboardStore.currFilters = { ...dashboardStore.appliedRandomFilters }
+			if (!dashboardStore.appliedRandomFilters)
+				dashboardStore.appliedRandomFilters = JSON.parse(
+					JSON.stringify(dashboardStore.filtersConfig.random.defaultFilters)
+				)
+			dashboardStore.currFilters = JSON.parse(JSON.stringify(dashboardStore.appliedRandomFilters))
+			dashboardStore.filtersChanged = false
 			setFiltersActive(dashboardStore.randomFiltersActive)
 		} else if (page === 'list') {
-			dashboardStore.appliedListFilters = dashboardStore.filtersConfig.list.defaultFilters
-			dashboardStore.currFilters = { ...dashboardStore.appliedRandomFilters }
+			if (!dashboardStore.appliedListFilters)
+				dashboardStore.appliedListFilters = JSON.parse(JSON.stringify(dashboardStore.filtersConfig.list.defaultFilters))
+			dashboardStore.currFilters = JSON.parse(JSON.stringify(dashboardStore.appliedListFilters))
+			dashboardStore.filtersChanged = false
 			setFiltersActive(dashboardStore.listFiltersActive)
 		}
 	}, [
@@ -83,8 +95,18 @@ const FiltersPanel = observer(() => {
 					<Spinner />
 				</div>
 			)}
-			{dashboardStore.filtersConfig.fetchState === 'success' && (
-				<div className={`${styles['inputs-container']} ${!filtersActive ? styles['filters-disabled'] : ''}`}>
+
+			{dashboardStore.filtersDisabled && dashboardStore.filtersConfig.fetchState === 'success' && (
+				<div className={styles['filters-disabled-wrapper']}>
+					<div className={styles['filters-disabled']}>
+						<FiltersDisabledSvg />
+						<span>Disabled</span>
+					</div>
+				</div>
+			)}
+
+			{dashboardStore.filtersConfig.fetchState === 'success' && !dashboardStore.filtersDisabled && (
+				<div className={`${styles['inputs-container']} ${!filtersActive ? styles['filters-inactive'] : ''}`}>
 					{!!filtersSettings && (
 						<div className={styles['inputs-wrapper']}>
 							{/* SORT */}
@@ -141,7 +163,7 @@ const FiltersPanel = observer(() => {
 											<span>From</span>
 											<Select
 												options={filtersSettings.yearOptions}
-												selected={dashboardStore.currFilters?.year?.from}
+												selected={dashboardStore.currFilters?.yearFrom}
 												onChange={(e) => dashboardStore.handleFilterChange('year-from', e.target.value)}
 											/>
 										</div>
@@ -149,7 +171,7 @@ const FiltersPanel = observer(() => {
 											<span>To</span>
 											<Select
 												options={filtersSettings.yearOptions}
-												selected={dashboardStore.currFilters?.year?.to}
+												selected={dashboardStore.currFilters?.yearTo}
 												onChange={(e) => dashboardStore.handleFilterChange('year-to', e.target.value)}
 											/>
 										</div>
@@ -211,12 +233,12 @@ const FiltersPanel = observer(() => {
 				</div>
 			)}
 
-			<div className={`${styles['bottom-wrapper']} ${!filtersActive ? styles['filters-disabled'] : ''}`}>
-				<Button type='secondary' name='Reset' onClick={dashboardStore.resetFilter} />
+			<div className={`${styles['bottom-wrapper']} ${!filtersActive ? styles['filters-inactive'] : ''}`}>
+				<Button type='secondary' name='Reset' onClick={() => dashboardStore.resetFilter(page)} />
 				<Button
 					type='primary'
 					name='Apply'
-					onClick={dashboardStore.applyFilters}
+					onClick={() => dashboardStore.applyFilters(page)}
 					disabled={!dashboardStore.filtersChanged}
 				/>
 			</div>

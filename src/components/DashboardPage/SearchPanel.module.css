@@ -29,11 +29,31 @@
 }
 
 .content {
+	flex: 1;
+	display: flex;
 	overflow-y: scroll;
+	flex-direction: column;
 }
 
 .controls-wrapper {
 	display: flex;
 	align-items: center;
 	gap: var(--spacing-sm);
+}
+
+.loader-wrapper {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	flex: 1;
+	padding-bottom: 40px;
+}
+
+.load-more-container {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	height: 170px;
+	flex-shrink: 0;
+	padding-bottom: 16px;
 }

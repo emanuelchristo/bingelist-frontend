@@ -9,8 +9,8 @@ export default function Select({ icon, options, label, selected, onChange = () =
 			<div className={styles['select']} aria-label='select'>
 				{!!icon && <div className={styles['icon-wrapper']}>{icon}</div>}
 				<select value={selected} onChange={onChange}>
-					{options.map((item) => (
-						<option key={item.value} value={item.value}>
+					{options.map((item, index) => (
+						<option key={`${item}${index}`} value={item.value}>
 							{item.name}
 						</option>
 					))}

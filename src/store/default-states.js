@@ -13,6 +13,13 @@ export const defaults = {
 		upcoming: { tv: [], movies: [] },
 	},
 
+	browse: {
+		fetchState: 'none',
+		movies: [],
+		currPage: 1,
+		totalPages: 1,
+	},
+
 	movieDetails: {
 		fetchState: 'none',
 		details: null,

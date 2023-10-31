@@ -1,22 +1,20 @@
-import { useState } from 'react'
+import { observer } from 'mobx-react-lite'
+import { dashboardStore } from '../../store/stores'
+import { useEffect } from 'react'
 
-// import IconButton from '../common/IconButton'
-// import TextBox from '../common/TextBox'
-// import Tabs from '../common/Tabs'
 import MovieGrid from '../common/MovieGrid'
 import IconButton from '../common/IconButton'
+import Spinner from '../common/Spinner'
+import Button from '../common/Button'
 
 import SearchSvg from '/src/assets/icons/search.svg?react'
 
 import styles from './SearchPanel.module.css'
-import { dashboardStore } from '../../store/stores'
 
-export default function SearchPanel() {
-	// const [searchQuery, setSearchQuery] = useState('')
-	// const [selectedTab, setSelectedTab] = useState('all')
-	const [pageNo, setPageNo] = useState(0)
-	const [movies, setMovies] = useState([])
-	const [loading, setLoading] = useState(false)
+const SearchPanel = observer(() => {
+	useEffect(() => {
+		dashboardStore.fetchBrowse()
+	}, [])
 
 	function handleQuickSearch() {
 		dashboardStore.quickSearch().then((data) => {
@@ -31,20 +29,34 @@ export default function SearchPanel() {
 					<span className={styles['header-title']}>Browse</span>
 				</div>
 				<div className={styles['controls-wrapper']}>
-					{/* <TextBox
-						placeholder='Search...'
-						value={searchQuery}
-						onChange={(e) => {
-							setSearchQuery(e.target.value)
-						}}
-					/> */}
 					<IconButton icon={<SearchSvg />} size='lg' onClick={handleQuickSearch} />
 				</div>
 			</div>
 
 			<div className={styles['content']}>
-				<MovieGrid movies={movies} loading={loading} />
+				{dashboardStore.browse.movies?.length > 0 ? (
+					<>
+						<MovieGrid movies={dashboardStore.browse.movies} />
+						{dashboardStore.browse?.currPage <= dashboardStore.browse?.totalPages && (
+							<div className={styles['load-more-container']}>
+								{dashboardStore.browse?.fetchState === 'loading' ? (
+									<Spinner />
+								) : (
+									<div style={{ width: 200 }}>
+										<Button type='secondary' name='Load more' onClick={dashboardStore.fetchBrowse} />
+									</div>
+								)}
+							</div>
+						)}
+					</>
+				) : (
+					<div className={styles['loader-wrapper']}>
+						<Spinner />
+					</div>
+				)}
 			</div>
 		</div>
 	)
-}
+})
+
+export default SearchPanel
