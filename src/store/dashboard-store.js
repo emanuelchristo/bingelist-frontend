@@ -368,6 +368,12 @@ class DashboardStore {
 				return { id: item.id, media_type: item.media_type }
 			})
 
+			const existingIds = new Set(Object.keys(this.waFaStatus))
+
+			const temp = movieIds.filter((item) => !existingIds.has(item))
+
+			if (temp.length === 0) return
+
 			const { data } = await axios.post(
 				BACKEND_URL + '/watched_or_faved',
 				{
@@ -473,6 +479,7 @@ class DashboardStore {
 				fetchState: 'loading',
 			}
 
+			this.updateMovieWaFa([movieId])
 			const { data } = await axios.get(BACKEND_URL + '/movie_details', { params: movieId, headers: genAuthHeaders() })
 
 			this.movieDetails = {
