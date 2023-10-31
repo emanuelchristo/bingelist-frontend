@@ -1,8 +1,10 @@
+import { observer } from 'mobx-react-lite'
 import { dashboardStore } from '../../store/stores'
 import { formatGenres, formatMediaType, formatRating, formatDuration, getFlagEmoji } from '../../utils/movie-format'
 
 import CastItem from './CastItem'
 import Spinner from './Spinner'
+import { FavButton, WatchedButton, ListButton } from './ControlButtons'
 
 import PlaySvg from '/src/assets/icons/play-circle.svg?react'
 import RatingIcon from '/src/assets/logos/rating.png'
@@ -10,7 +12,7 @@ import Imdb from '/src/assets/logos/imdb.svg'
 
 import styles from './MovieContent.module.css'
 
-export default function MovieContent({ data, loading }) {
+const MovieContent = observer(({ data, loading }) => {
 	if (loading)
 		return (
 			<div className={styles['loading-wrapper']}>
@@ -34,6 +36,19 @@ export default function MovieContent({ data, loading }) {
 							<span className={styles['meta-text']}>{formatGenres(data?.genres)}</span>
 						</div>
 						<div className={styles['movie-meta-2-wrapper']}>
+							<div className={styles['controls-wrapper']}>
+								<FavButton
+									fav={dashboardStore.getMovieWaFa({ id: data?.id, media_type: data?.media_type })?.faved}
+									onClick={() => dashboardStore.favMovie({ id: data?.id, media_type: data?.media_type })}
+								/>
+								<WatchedButton
+									watched={dashboardStore.getMovieWaFa({ id: data?.id, media_type: data?.media_type })?.watched}
+									onClick={() => dashboardStore.watchedMovie({ id: data?.id, media_type: data?.media_type })}
+								/>
+								<ListButton onClick={() => dashboardStore.addToList(data)} />
+							</div>
+							<div className={styles['separator']}></div>
+
 							<div className={styles['rt-wrapper']}>
 								<img src={RatingIcon} />
 								<span>{formatRating(data?.vote_average)}</span>
@@ -90,4 +105,6 @@ export default function MovieContent({ data, loading }) {
 				)}
 			</div>
 		)
-}
+})
+
+export default MovieContent

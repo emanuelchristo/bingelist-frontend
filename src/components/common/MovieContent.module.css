@@ -25,7 +25,7 @@
 
 .poster {
 	aspect-ratio: 134 / 225;
-	width: 120px;
+	width: 130px;
 	background-color: var(--image-bg);
 	border: var(--card-border);
 	border-radius: var(--radius-sm);
@@ -51,6 +51,7 @@
 .movie-title {
 	font-size: 24px;
 	font-weight: var(--font-weight-semibold);
+	line-height: 1.15;
 }
 
 .movie-meta-wrapper {
@@ -84,6 +85,11 @@
 	display: flex;
 	align-items: center;
 	gap: 14px;
+}
+
+.controls-wrapper {
+	display: flex;
+	gap: 6px;
 }
 
 .separator {

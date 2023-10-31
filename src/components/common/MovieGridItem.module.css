@@ -100,32 +100,3 @@
 	align-items: center;
 	gap: 4px;
 }
-
-.playlist-icon,
-.fav-outline,
-.fav-fill,
-.watched-outline,
-.watched-fill {
-	width: var(--icon-size-md);
-	height: var(--icon-size-md);
-}
-
-.playlist-icon path,
-.fav-outline path,
-.watched-outline path {
-	fill: var(--text-light);
-}
-
-.fav-fill path {
-	color: var(--red);
-}
-
-.watched-fill path {
-	color: var(--green);
-}
-
-.playlist-button:active path,
-.fav-button:active path,
-.watched-button:active path {
-	fill: var(--text-bright);
-}

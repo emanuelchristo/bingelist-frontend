@@ -25,7 +25,7 @@ const QuickSearch = observer(() => {
 		dashboardStore.fetchQuickSearch(query).then((res) => {
 			setLoading(false)
 			setResults(res)
-			if (res.length > 0) selectedIndex(0)
+			if (res.length > 0) setSelectedIndex(0)
 			else setSelectedIndex(-1)
 		})
 	}, [query])
