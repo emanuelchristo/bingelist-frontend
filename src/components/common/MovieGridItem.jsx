@@ -39,7 +39,7 @@ const MovieGridItem = observer(({ data, inList }) => {
 				</div>
 				<div
 					className={styles['content-bottom']}
-					onClick={() => dashboardStore.handleMovieClick({ id: data?.id, media_type: data?.media_type })}
+					onClick={() => dashboardStore.showMovieModal({ id: data?.id, media_type: data?.media_type })}
 				>
 					<span className={styles['title']}>{data?.title ?? '--'}</span>
 					<span className={styles['year']}>{formatYear(data?.release_date)}</span>

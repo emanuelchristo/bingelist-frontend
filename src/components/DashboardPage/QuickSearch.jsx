@@ -33,6 +33,7 @@ const QuickSearch = observer(() => {
 	useEffect(() => {
 		if (dashboardStore.quickSearchPromise) {
 			searchRef.current.focus()
+			setQuery('')
 			setLoading(false)
 			setResults([])
 			setSelectedIndex(-1)
@@ -113,8 +114,19 @@ const QuickSearch = observer(() => {
 export default QuickSearch
 
 function MovieItem({ data, onClick, selected }) {
+	const itemRef = useRef()
+
+	useEffect(() => {
+		if (selected) {
+			itemRef.current.scrollIntoView({
+				block: 'nearest',
+				inline: 'start',
+			})
+		}
+	}, [selected])
+
 	return (
-		<div className={`${styles['movie-item']} ${selected ? styles['selected'] : ''}`} onClick={onClick}>
+		<div className={`${styles['movie-item']} ${selected ? styles['selected'] : ''}`} onClick={onClick} ref={itemRef}>
 			<div className={styles['poster']} style={{ backgroundImage: `url('${data?.poster_path}')` }}></div>
 			<div className={styles['text-wrapper']}>
 				<span className={styles['movie-title']}>{data?.title ?? '--'}</span>

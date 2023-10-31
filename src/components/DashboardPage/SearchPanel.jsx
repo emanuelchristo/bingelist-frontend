@@ -20,7 +20,7 @@ export default function SearchPanel() {
 
 	function handleQuickSearch() {
 		dashboardStore.quickSearch().then((data) => {
-			if (data) setMovies([...movies, ...data])
+			dashboardStore.showMovieModal({ id: data.id, media_type: data.media_type })
 		})
 	}
 
