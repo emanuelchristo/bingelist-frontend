@@ -50,10 +50,13 @@
 	display: grid;
 	place-content: center;
 	background: linear-gradient(180deg, #821ee5 0%, #20007b 100%);
+	background-size: cover;
+	background-position: center;
+	background-repeat: no-repeat;
 }
 
 .avatar-initials {
-	font-size: var(--font-size-lg);
+	font-size: 18px;
 }
 
 .more-container {

@@ -1,6 +1,6 @@
 import { makeAutoObservable, runInAction } from 'mobx'
-import axios from 'axios'
 import { defaults } from './default-states'
+import axios from 'axios'
 // import { googleSignIn } from '../utils/google-auth'
 
 const BACKEND_URL = import.meta.env.VITE_BACKEND_URL
@@ -79,6 +79,9 @@ class DashboardStore {
 
 	/* Quick search */
 	quickSearchPromise = null
+
+	/* Auth */
+	user = null
 
 	filterSettings = {
 		sortOptions: [
@@ -435,6 +438,42 @@ class DashboardStore {
 		this.youtubeVideo = null
 	}
 
+	/* GOOGLE AUTH ACTIONS */
+	handleGoogleLogin = (response) => {
+		const jwt = response.credential
+		window.localStorage.setItem('jwt', jwt)
+
+		this.signIn()
+	}
+
+	signOut = () => {
+		localStorage.removeItem('jwt')
+		window.location = '/'
+	}
+
+	signIn = () => {
+		let inDashboard = window.location.pathname.startsWith('/dashboard')
+
+		const jwt = window.localStorage.getItem('jwt')
+
+		if (!jwt) {
+			if (inDashboard) window.location = '/'
+		} else {
+			axios
+				.post(BACKEND_URL + '/sign_in', null, { headers: genAuthHeaders() })
+				.then(({ data }) => {
+					console.log(data)
+					this.user = data
+					if (!inDashboard) window.location = '/dashboard/discover'
+				})
+				.catch(() => {
+					console.error('Failed to sign in')
+					localStorage.removeItem('jwt')
+					window.location = '/'
+				})
+		}
+	}
+
 	/* QUICK SEARCH */
 	quickSearch = () => {
 		return new Promise((resolve) => {
@@ -462,47 +501,6 @@ class DashboardStore {
 	closeQuickSearch = () => {
 		this.quickSearchPromise(null)
 		this.quickSearchPromise = null
-	}
-
-	// GOOGLE AUTH
-	signIn = () => {
-		google.accounts.id.prompt()
-	}
-
-	handleGoogleLogin = (response) => {
-		const jwt = response.credential
-		console.log(jwt)
-		window.localStorage.setItem('jwt', jwt)
-
-		this.verifyJwt()
-
-		// call signup to server here
-	}
-
-	signOut = () => {
-		localStorage.removeItem('jwt')
-		window.location = '/'
-	}
-
-	verifyJwt = () => {
-		let inDashboard = false
-		if (window.location.pathname.startsWith('/dashboard')) inDashboard = true
-
-		const jwt = window.localStorage.getItem('jwt')
-		if (!jwt) {
-			if (inDashboard) window.location = '/'
-		} else {
-			if (!inDashboard) window.location = '/dashboard/discover'
-		}
-
-		// axios.post(BACKEND_URL + '/sign_in', { jwt: jwt }).then(({ data }) => {
-		// 	data = { valid: true }
-		// 	if (!data.valid) {
-		// 		if (inDashboard) window.location = '/'
-		// 	} else {
-		// 		if (!inDashboard) window.location = '/dashboard/discover'
-		// 	}
-		// })
 	}
 
 	// SEARCH

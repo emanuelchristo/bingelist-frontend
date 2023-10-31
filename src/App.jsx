@@ -13,7 +13,7 @@ import SimilarPanel from './components/DashboardPage/SimilarPanel'
 
 function App() {
 	useEffect(() => {
-		dashboardStore.verifyJwt()
+		dashboardStore.signIn()
 	}, [])
 
 	return (

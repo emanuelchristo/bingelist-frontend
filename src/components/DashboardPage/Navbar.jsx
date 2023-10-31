@@ -12,6 +12,21 @@ import ContextMenu from '../common/ContextMenu'
 
 import styles from './Navbar.module.css'
 
+function getInitials(name) {
+	if (typeof name !== 'string' || !name) return '😀'
+	const initials = name
+		.split(' ')
+		.map((item) => item.charAt(0))
+		.join('')
+		.toUpperCase()
+		.slice(0, 2)
+
+	console.log(initials)
+
+	if (!initials) return '😀'
+	else return initials
+}
+
 const Navbar = observer(() => {
 	const [showMoreMenu, setShowMoreMenu] = useState(false)
 
@@ -43,8 +58,14 @@ const Navbar = observer(() => {
 				))}
 			</div>
 			<div className={styles['more-container']}>
-				<div className={styles['avatar']} onClick={() => setShowMoreMenu(true)}>
-					<span className={styles['avatar-initials']}>C</span>
+				<div
+					className={styles['avatar']}
+					onClick={() => setShowMoreMenu(true)}
+					style={dashboardStore.user?.picture ? { backgroundImage: `url(${dashboardStore.user?.picture})` } : {}}
+				>
+					{!dashboardStore.user?.picture && (
+						<span className={styles['avatar-initials']}>{getInitials(dashboardStore.user?.name)}</span>
+					)}
 				</div>
 				<div className={styles['more-menu-wrapper']}>
 					<ContextMenu

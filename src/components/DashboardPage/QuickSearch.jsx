@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { observer } from 'mobx-react-lite'
 import { dashboardStore } from '../../store/stores'
 
@@ -15,14 +15,50 @@ const QuickSearch = observer(() => {
 	const [loading, setLoading] = useState(false)
 	const [results, setResults] = useState([])
 	const [query, setQuery] = useState('')
+	const [selectedIndex, setSelectedIndex] = useState(-1)
+
+	const searchRef = useRef()
 
 	useEffect(() => {
 		setLoading(true)
 		dashboardStore.fetchQuickSearch(query).then((res) => {
 			setLoading(false)
 			setResults(res)
+			if (res.length > 0) selectedIndex(0)
+			else setSelectedIndex(-1)
 		})
 	}, [query])
+
+	useEffect(() => {
+		if (dashboardStore.quickSearchPromise) {
+			searchRef.current.focus()
+			setLoading(false)
+			setResults([])
+			setSelectedIndex(-1)
+		}
+	}, [dashboardStore.quickSearchPromise])
+
+	function handleKeyDowns(e) {
+		const key = e.key
+
+		if (key === 'ArrowUp' || key === 'ArrowDown')
+			setSelectedIndex((index) => {
+				if (results.length === 0) return -1
+				if (key === 'ArrowUp') index -= 1
+				else if (key === 'ArrowDown') index += 1
+
+				if (index >= results.length) index = results.length - 1
+				if (index < 0) index = 0
+
+				return index
+			})
+		// Selecting a file
+		else if (key === 'Enter') {
+			if (results.length < 1) return
+			const item = results[selectedIndex]
+			dashboardStore.chooseQuickSearch({ id: item.id, media_type: item.media_type })
+		}
+	}
 
 	return (
 		<Modal
@@ -41,7 +77,9 @@ const QuickSearch = observer(() => {
 						placeholder='Search...'
 						clear={true}
 						value={query}
+						onKeyDown={handleKeyDowns}
 						onChange={(e) => setQuery(e.target.value)}
+						ref={searchRef}
 					/>
 				</div>
 				<div className={styles['content']}>
@@ -51,9 +89,10 @@ const QuickSearch = observer(() => {
 						</div>
 					) : results?.length > 0 ? (
 						<>
-							{results.map((item) => (
+							{results.map((item, index) => (
 								<MovieItem
 									key={item.media_type + item.id}
+									selected={selectedIndex === index}
 									onClick={() => dashboardStore.chooseQuickSearch({ id: item.id, media_type: item.media_type })}
 								/>
 							))}
@@ -71,9 +110,9 @@ const QuickSearch = observer(() => {
 
 export default QuickSearch
 
-function MovieItem({ onClick }) {
+function MovieItem({ onClick, selected }) {
 	return (
-		<div className={styles['movie-item']} onClick={onClick}>
+		<div className={`${styles['movie-item']} ${selected ? styles['selected'] : ''}`} onClick={onClick}>
 			<div className={styles['poster']}></div>
 			<div className={styles['text-wrapper']}>
 				<span className={styles['movie-title']}>Spider-Man: No Way Home</span>

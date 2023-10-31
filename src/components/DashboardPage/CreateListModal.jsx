@@ -1,6 +1,6 @@
 import { observer } from 'mobx-react-lite'
 import { dashboardStore } from '../../store/stores'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 
 import Modal from '../common/Modal'
 import Button from '../common/Button'
@@ -16,6 +16,12 @@ import styles from './CreateListModal.module.css'
 const CreateList = observer(() => {
 	const [emoji, setEmoji] = useState('✏️')
 	const [title, setTitle] = useState('')
+
+	const textBoxRef = useRef()
+
+	useEffect(() => {
+		if (dashboardStore.showCreateList) textBoxRef.current.focus()
+	}, [dashboardStore.showCreateList])
 
 	useEffect(() => {
 		if (!dashboardStore.editListId) return
@@ -54,6 +60,7 @@ const CreateList = observer(() => {
 						value={title}
 						focus
 						onChange={(e) => setTitle(e.target.value)}
+						ref={textBoxRef}
 					/>
 					{dashboardStore.createListState === 'loading' && (
 						<div className={styles['loader-wrapper']}>
