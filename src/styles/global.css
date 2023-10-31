@@ -5,7 +5,7 @@
 html,
 body,
 #root {
-	overflow-x: hidden;
+	/* overflow-x: scroll; */
 	background: var(--app-bg);
 	width: 100vw;
 	height: 100vh;

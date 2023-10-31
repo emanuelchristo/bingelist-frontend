@@ -89,3 +89,10 @@
 .year {
 	color: var(--text-light);
 }
+
+.loader-wrapper {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	flex: 1;
+}

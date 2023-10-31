@@ -1,3 +1,4 @@
+import Empty from './Empty'
 import Spinner from './Spinner'
 import MovieGridItem from './MovieGridItem'
 
@@ -15,12 +16,14 @@ export default function MovieGrid({ movies, loading }) {
 			<div className={styles['grid-container']}>
 				{movies?.length > 0 ? (
 					<div className={styles['grid']}>
-						{movies?.map((item, index) => (
+						{movies?.map((item) => (
 							<MovieGridItem key={item.media_type + item.id} data={item} />
 						))}
 					</div>
 				) : (
-					<div className={styles['empty']}>Nothing here</div>
+					<div className={styles['empty']}>
+						<Empty />
+					</div>
 				)}
 			</div>
 		)

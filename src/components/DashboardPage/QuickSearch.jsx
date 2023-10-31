@@ -1,36 +1,75 @@
+import { useState, useEffect } from 'react'
+import { observer } from 'mobx-react-lite'
 import { dashboardStore } from '../../store/stores'
-import { useRef, useEffect } from 'react'
+
+import Modal from '../common/Modal'
+import TextBox from '../common/TextBox'
+import Spinner from '../common/Spinner'
+import Empty from '../common/Empty'
 
 import SearchSvg from '/src/assets/icons/search.svg?react'
 
-import TextBox from '../common/TextBox'
-
 import styles from './QuickSearch.module.css'
 
-export default function QuickSearch() {
-	const cardRef = useRef()
+const QuickSearch = observer(() => {
+	const [loading, setLoading] = useState(false)
+	const [results, setResults] = useState([])
+	const [query, setQuery] = useState('')
 
 	useEffect(() => {
-		function handleOutsideClick(e) {
-			if (cardRef.current && !cardRef.current.contains(e.target)) dashboardStore.closeQuickSearch()
-		}
-		document.addEventListener('mousedown', handleOutsideClick)
-		return () => {
-			document.removeEventListener('mousedown', handleOutsideClick)
-		}
-	})
+		setLoading(true)
+		dashboardStore.fetchQuickSearch(query).then((res) => {
+			setLoading(false)
+			setResults(res)
+		})
+	}, [query])
 
 	return (
-		<div className={styles['quick-search'] + ' card'} ref={cardRef}>
-			<div className={styles['search-wrapper']}>
-				<TextBox icon={<SearchSvg />} placeholder='Search...' clear={true} onChange={() => {}} />
+		<Modal
+			show={!!dashboardStore.quickSearchPromise}
+			onClose={() => {
+				setQuery('')
+				setResults([])
+				setLoading(false)
+				dashboardStore.closeQuickSearch()
+			}}
+		>
+			<div className={styles['quick-search'] + ' card'}>
+				<div className={styles['search-wrapper']}>
+					<TextBox
+						icon={<SearchSvg />}
+						placeholder='Search...'
+						clear={true}
+						value={query}
+						onChange={(e) => setQuery(e.target.value)}
+					/>
+				</div>
+				<div className={styles['content']}>
+					{loading ? (
+						<div className={styles['loader-wrapper']}>
+							<Spinner />
+						</div>
+					) : results?.length > 0 ? (
+						<>
+							{results.map((item) => (
+								<MovieItem
+									key={item.media_type + item.id}
+									onClick={() => dashboardStore.chooseQuickSearch({ id: item.id, media_type: item.media_type })}
+								/>
+							))}
+						</>
+					) : (
+						<div className={styles['loader-wrapper']}>
+							<Empty />
+						</div>
+					)}
+				</div>
 			</div>
-			<div className={styles['content']}>
-				<MovieItem onClick={() => dashboardStore.chooseQuickSearch('movieId')} />
-			</div>
-		</div>
+		</Modal>
 	)
-}
+})
+
+export default QuickSearch
 
 function MovieItem({ onClick }) {
 	return (

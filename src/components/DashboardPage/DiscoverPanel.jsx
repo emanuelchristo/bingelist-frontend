@@ -42,7 +42,7 @@ const DiscoverPanel = observer(() => {
 
 				<DiscoverSection
 					title='⭐️ Popular'
-					selectedTab={dashboardStore.popularTab}
+					selectedTab={popularTab}
 					tabs={[
 						{ name: 'Movies', value: 'movies' },
 						{ name: 'TV Shows', value: 'tv' },

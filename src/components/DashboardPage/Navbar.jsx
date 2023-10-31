@@ -17,7 +17,7 @@ const Navbar = observer(() => {
 
 	const navOptions = [
 		{ id: 'discover', name: 'Discover', icon: <DiscoverSvg />, href: '/dashboard/discover' },
-		{ id: 'search', name: 'Search', icon: <SearchSvg />, href: '/dashboard/search' },
+		{ id: 'browse', name: 'Browse', icon: <SearchSvg />, href: '/dashboard/browse' },
 		{ id: 'random', name: 'Random', icon: <ShuffleSvg />, href: '/dashboard/random' },
 		{ id: 'similar', name: 'Similar', icon: <SimilarSvg />, href: '/dashboard/similar' },
 	]

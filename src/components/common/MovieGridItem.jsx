@@ -13,10 +13,6 @@ import ListAddSvg from '/src/assets/icons/list-add.svg?react'
 import styles from './MovieGridItem.module.css'
 
 const MovieGridItem = observer(({ data, inList }) => {
-	function handleListClick() {
-		dashboardStore.handleAddToListClick({ id: data?.id, media_type: data?.media_type })
-	}
-
 	return (
 		<div className={styles['movie-grid-item']}>
 			<div
@@ -36,7 +32,10 @@ const MovieGridItem = observer(({ data, inList }) => {
 							onClick={() => dashboardStore.watchedMovie({ id: data?.id, media_type: data?.media_type })}
 						/>
 					</div>
-					<div className={styles['playlist-button']} onClick={handleListClick}>
+					<div
+						className={styles['playlist-button']}
+						onClick={() => dashboardStore.addToList({ id: data?.id, media_type: data?.media_type })}
+					>
 						{!!inList && <ListRemoveSvg className={styles['playlist-icon']} />}
 						{!inList && <ListAddSvg className={styles['playlist-icon']} />}
 					</div>

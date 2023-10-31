@@ -1,4 +1,4 @@
-import { makeAutoObservable } from 'mobx'
+import { makeAutoObservable, runInAction } from 'mobx'
 import axios from 'axios'
 import { defaults } from './default-states'
 // import { googleSignIn } from '../utils/google-auth'
@@ -48,12 +48,23 @@ function genAuthHeaders() {
 class DashboardStore {
 	/* Lists */
 	lists = defaults.lists
+
 	showCreateList = false
 	createListState = 'none'
+
 	editListId = null
 	showDeleteList = false
+
 	deleteListId = null
 	deleteListState = 'none'
+
+	showAddToListModal = false
+	addToListMovieId = null
+	movieLists = { fetchState: 'none', listsState: {} }
+	addToListState = 'none'
+
+	listDetails = null
+	listDetailsState = 'none'
 
 	/* Discover */
 	discover = defaults.discover
@@ -65,6 +76,9 @@ class DashboardStore {
 	showMovieDetailsModal = false
 	movieDetails = defaults.movieDetails
 	youtubeVideo = null
+
+	/* Quick search */
+	quickSearchPromise = null
 
 	filterSettings = {
 		sortOptions: [
@@ -114,13 +128,6 @@ class DashboardStore {
 	filtersChanged = false
 	appliedFilters = { ...defaultFilters }
 
-	showAddToListModal = false
-	showQuickSearch = false
-
-	movieModalId = null
-	addToListMovieId = null
-	quickSearchPromise = null
-
 	constructor() {
 		makeAutoObservable(this)
 	}
@@ -134,6 +141,24 @@ class DashboardStore {
 		} catch (err) {
 			console.error('Failed to fetch lists')
 			this.lists = { ...defaults.lists, fetchState: 'error' }
+		}
+	}
+
+	fetchListDetials = async (listId) => {
+		try {
+			this.listDetailsState = 'loading'
+			this.listDetails = null
+
+			const { data } = await axios.get(BACKEND_URL + '/list_details', { params: { listId: listId } })
+			console.log(data.movies.length)
+
+			console.log('here')
+
+			this.listDetailsState = 'success'
+			this.listDetails = data
+		} catch (err) {
+			this.listDetailsState = 'error'
+			console.error('Failed to fetch list details')
 		}
 	}
 
@@ -253,6 +278,51 @@ class DashboardStore {
 		}
 	}
 
+	/* Add to list */
+	addToList = async (movieId) => {
+		try {
+			this.showAddToListModal = true
+			this.addToListMovieId = movieId
+			this.movieLists = { fetchState: 'loading', listsState: {} }
+
+			const { data } = await axios(BACKEND_URL + '/get_movie_lists', { params: { ...movieId } })
+
+			this.movieLists = { fetchState: 'success', listsState: data }
+		} catch (err) {
+			this.movieLists = { fetchState: 'error', listsState: {} }
+			console.error('Failed to fetch lists movie is in')
+		}
+	}
+
+	cancelAddToList = () => {
+		this.addToListMovieId = null
+		this.showAddToListModal = false
+		this.movieLists = { fetchState: 'none', listsState: {} }
+	}
+
+	toggleListInclude = (listId) => {
+		console.log(listId)
+		this.movieLists.listsState[listId] = !this.movieLists.listsState[listId]
+	}
+
+	okAddToList = async () => {
+		try {
+			this.addToListState = 'loading'
+
+			await axios.post(BACKEND_URL + '/add_movie_list', this.movieLists.listsState, {
+				params: { ...this.addToListMovieId },
+			})
+
+			this.addToListState = 'success'
+			this.addToListMovieId = null
+			this.showAddToListModal = false
+			this.movieLists = { fetchState: 'none', listsState: {} }
+		} catch (err) {
+			console.error('Failed to update add to list')
+			this.addToListState = 'error'
+		}
+	}
+
 	/* DISCOVER ACTIONS */
 	fetchDiscover = async () => {
 		try {
@@ -365,16 +435,33 @@ class DashboardStore {
 		this.youtubeVideo = null
 	}
 
-	handleAddToListClick = (movieId) => {
-		this.showAddToListModal = true
-		this.addToListMovieId = movieId
+	/* QUICK SEARCH */
+	quickSearch = () => {
+		return new Promise((resolve) => {
+			this.quickSearchPromise = resolve
+		})
 	}
 
-	handleAddToListOk = (movieId, listIds) => {}
+	fetchQuickSearch = (query) => {
+		return new Promise(async (resolve) => {
+			try {
+				// const { data } = await axios.get(BACKEND_URL + '/quick_search', { params: { query: query } })
+				setTimeout(() => resolve([]), 500)
+			} catch (err) {
+				console.error('Failed to fetch quick search')
+				resolve([])
+			}
+		})
+	}
 
-	handleAddToListCancel = () => {
-		this.addToListMovieId = null
-		this.showAddToListModal = false
+	chooseQuickSearch = (movieId) => {
+		this.quickSearchPromise(movieId)
+		this.quickSearchPromise = null
+	}
+
+	closeQuickSearch = () => {
+		this.quickSearchPromise(null)
+		this.quickSearchPromise = null
 	}
 
 	// GOOGLE AUTH
@@ -416,26 +503,6 @@ class DashboardStore {
 		// 		if (!inDashboard) window.location = '/dashboard/discover'
 		// 	}
 		// })
-	}
-
-	// QUICK SEARCH
-	getQuickSearch = () => {
-		this.showQuickSearch = true
-		return new Promise((resolve) => {
-			this.quickSearchPromise = resolve
-		})
-	}
-
-	chooseQuickSearch = (movieId) => {
-		this.showQuickSearch = false
-		this.quickSearchPromise(movieId)
-		this.quickSearchPromise = null
-	}
-
-	closeQuickSearch = () => {
-		this.showQuickSearch = false
-		this.quickSearchPromise(null)
-		this.quickSearchPromise = null
 	}
 
 	// SEARCH

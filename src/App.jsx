@@ -22,7 +22,7 @@ function App() {
 				<Route path='/' element={<LandingPage />} />
 				<Route path='/dashboard' element={<DashboardPage />}>
 					<Route path='discover' element={<DiscoverPanel />} />
-					<Route path='search' element={<SearchPanel />} />
+					<Route path='browse' element={<SearchPanel />} />
 					<Route path='random' element={<RandomPanel />} />
 					<Route path='similar' element={<SimilarPanel />} />
 					<Route path='list/:listId' element={<ListPanel />} />
