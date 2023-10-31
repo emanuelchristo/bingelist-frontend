@@ -5,7 +5,21 @@ import CloseSvg from '/src/assets/icons/close.svg?react'
 import styles from './Inputs.module.css'
 
 const TextBox = forwardRef(
-	({ icon, label, placeholder, clear, focus, onKeyDown = () => {}, onChange = () => {}, type, value = '' }, ref) => {
+	(
+		{
+			icon,
+			label,
+			placeholder,
+			clear,
+			focus,
+			onKeyDown = () => {},
+			onClear = () => {},
+			onChange = () => {},
+			type,
+			value = '',
+		},
+		ref
+	) => {
 		return (
 			<div className='w-full'>
 				{!!label && <span className={styles['label']}>{label}</span>}
@@ -21,7 +35,7 @@ const TextBox = forwardRef(
 						ref={ref}
 					/>
 					{!!clear && (
-						<div className={styles['select-chevron-wrapper']}>
+						<div className={styles['select-chevron-wrapper']} onClick={onClear}>
 							<CloseSvg />
 						</div>
 					)}

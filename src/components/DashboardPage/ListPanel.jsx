@@ -1,3 +1,4 @@
+import fuzzy from 'fuzzy'
 import { observer } from 'mobx-react-lite'
 import { useParams } from 'react-router-dom'
 import { dashboardStore } from '../../store/stores'
@@ -21,6 +22,8 @@ import styles from './ListPanel.module.css'
 const ListPanel = observer(() => {
 	const { listId } = useParams()
 	const [showMoreMenu, setShowMoreMenu] = useState(false)
+	const [displayedMovies, setDisplayedMovies] = useState([])
+	const [searchQuery, setSearchQuery] = useState('')
 
 	useEffect(() => {
 		if (!listId) return
@@ -36,6 +39,28 @@ const ListPanel = observer(() => {
 	function handleAddMovie() {
 		dashboardStore.getQuickSearch().then((movieId) => {})
 	}
+
+	useEffect(() => {
+		if (!dashboardStore.listDetails?.movies) {
+			setDisplayedMovies([])
+			return
+		}
+
+		if (!searchQuery) {
+			setDisplayedMovies(dashboardStore.listDetails.movies)
+			return
+		}
+
+		const results = fuzzy.filter(
+			searchQuery,
+			dashboardStore.listDetails.movies.filter(() => 1),
+			{ extract: (item) => item.title }
+		)
+
+		const extracted = results.map((item) => item.original)
+
+		setDisplayedMovies(extracted)
+	}, [dashboardStore.listDetails, searchQuery])
 
 	return (
 		<div className={styles['list-panel'] + ' card'}>
@@ -77,12 +102,21 @@ const ListPanel = observer(() => {
 							)}
 						</div>
 						<div className={styles['controls-wrapper']}>
-							<TextBox icon={<SearchSvg />} placeholder='Search...' clear={true} onChange={() => {}} />
+							<TextBox
+								icon={<SearchSvg />}
+								placeholder='Search...'
+								value={searchQuery}
+								clear={true}
+								onClear={() => setSearchQuery('')}
+								onChange={(e) => setSearchQuery(e.target.value)}
+							/>
 							{/* <IconButton icon={<GridSvg />} size='lg' /> */}
 							<IconButton icon={<AddSvg />} size='lg' onClick={handleAddMovie} />
 						</div>
 					</div>
-					<MovieGrid movies={dashboardStore.listDetails?.movies} />
+					<div className={styles['movie-grid-wrapper']}>
+						<MovieGrid movies={displayedMovies} />
+					</div>
 				</>
 			)}
 		</div>
