@@ -84,56 +84,86 @@ class DashboardStore {
 	/* Auth */
 	user = null
 
-	filterSettings = {
-		sortOptions: [
-			{ value: 'popularity', name: 'Popularity' },
-			{ value: 'latest', name: 'Latest' },
-		],
-		type: [
-			{ name: 'All', value: 'all' },
-			{ name: 'Movies', value: 'movies' },
-			{ name: 'TV Shows', value: 'tv-shows' },
-		],
-		genres: [
-			{ name: 'Action', value: 'action' },
-			{ name: 'Adventure', value: 'adventure' },
-			{ name: 'Animation', value: 'animation' },
-			{ name: 'Comedy', value: 'comedy' },
-			{ name: 'Crime', value: 'crime' },
-			{ name: 'Documentary', value: 'documentary' },
-			{ name: 'Drama', value: 'drama' },
-			{ name: 'Family', value: 'family' },
-			{ name: 'Fantasy', value: 'fantasy' },
-			{ name: 'History', value: 'history' },
-			{ name: 'Horror', value: 'horror' },
-			{ name: 'Music', value: 'music' },
-			{ name: 'Mystery', value: 'mystery' },
-			{ name: 'Romance', value: 'romance' },
-			{ name: 'Sci Fi', value: 'sci-fi' },
-			{ name: 'TV Movie', value: 'tv-movie' },
-			{ name: 'Thriller', value: 'thriller' },
-			{ name: 'War', value: 'war' },
-			{ name: 'Western', value: 'western' },
-		],
-		yearOptions: genYearOptions(),
-		imdbOptions: genImdbOptions(),
-		rtOptions: genRtOptions(),
-		languageOptions: [
-			{ name: 'English', value: 'en' },
-			{ name: 'Hindi', value: 'hi' },
-		],
-		durationOptions: [
-			{ value: 'under-2hr', name: 'Under 2hr' },
-			{ value: 'under-3hr', name: 'Under 3hr' },
-		],
+	/* Filters */
+	filtersConfig = {
+		fetchState: 'none',
+		browse: null,
+		random: null,
+		list: null,
 	}
-	filtersActive = true
-	filters = { ...defaultFilters }
+
+	appliedBrowseFilters = null
+	appliedRandomFilters = null
+	appliedListFilters = null
+
+	currFilters = null
+
+	filtersDisabled = false
 	filtersChanged = false
-	appliedFilters = { ...defaultFilters }
+
+	randomFiltersActive = true
+	browseFiltersActive = true
+	listFiltersActive = true
 
 	constructor() {
 		makeAutoObservable(this)
+	}
+
+	/* FILTERS */
+	fetchFilterSettings = async () => {
+		try {
+			const { data } = await axios.get(BACKEND_URL + '/filter_settings')
+
+			console.log(data)
+			this.filtersConfig = { ...data, fetchState: 'success' }
+		} catch (err) {
+			console.error('Failed to fetch filter settings')
+		}
+	}
+
+	handleFilterChange = (key, val) => {
+		if (key === 'genres') {
+			if (this.filters.genres.includes(val)) {
+				const newGenres = this.filters.genres.filter((item) => item !== val)
+				this.filters = { ...this.filters, genres: newGenres }
+			} else this.filters.genres.push(val)
+		} else if (key === 'year-from') {
+			if (val > this.filters.year.to) return
+			this.filters.year.from = val
+		} else if (key === 'year-to') {
+			if (val < this.filters.year.from) return
+			this.filters.year.to = val
+		} else if (key === 'adult') {
+			this.filters.adult = !this.filters.adult
+		} else {
+			this.filters[key] = val
+		}
+		this.filtersChanged = true
+	}
+
+	toggleFiltersActive = (page) => {
+		if (page === 'browse') this.browseFiltersActive = !this.browseFiltersActive
+		else if (page === 'random') this.randomFiltersActive = !this.randomFiltersActive
+		else if (page === 'list') this.listFiltersActive = !this.listFiltersActive
+	}
+
+	applyFilters = (page) => {
+		if (page === 'browse') this.appliedBrowseFilters = this.currFilters
+		else if (page === 'random') this.appliedRandomFilters = this.currFilters
+		else if (page === 'list') this.appliedListFilters = this.currFilters
+
+		this.filtersChanged = false
+	}
+
+	resetFilter = (page) => {
+		this.filters = { ...defaultFilters }
+		this.appliedFilters = { ...defaultFilters }
+
+		if (page === 'browse') this.appliedBrowseFilters = this.currFilters
+		else if (page === 'random') this.appliedRandomFilters = this.currFilters
+		else if (page === 'list') this.appliedListFilters = this.currFilters
+
+		this.filtersChanged = false
 	}
 
 	/* LISTS ACTIONS */
@@ -348,6 +378,20 @@ class DashboardStore {
 		}
 	}
 
+	addOneMovieToList = async (movie, listId) => {
+		try {
+			await axios.get(BACKEND_URL + '/add_one_movie_to_list', {
+				params: { id: movie.id, media_type: movie.media_type, listId: listId },
+				headers: genAuthHeaders(),
+			})
+
+			this.lists.yourLists.find((item) => item.listId === listId).count += 1
+			this.addOrRemoveFromDisplayedList(movie, listId, 'add')
+		} catch (err) {
+			console.error('Failed to add one movie to list')
+		}
+	}
+
 	addOrRemoveFromDisplayedList = (movie, listId, action) => {
 		if (!this.listDetails || this.listDetails.listId !== listId) return
 
@@ -355,9 +399,9 @@ class DashboardStore {
 			const temp = this.listDetails.movies.filter((item) => {
 				return !(item.id === movie.id && item.media_type === movie.media_type)
 			})
-			this.listDetails.movies = temp
+			this.listDetails = { ...this.listDetails, movies: temp }
 		} else if (action === 'add') {
-			this.listDetails.movies.push(movie)
+			this.listDetails = { ...this.listDetails, movies: [...this.listDetails.movies, movie] }
 		}
 	}
 
@@ -562,68 +606,14 @@ class DashboardStore {
 		})
 	}
 
-	chooseQuickSearch = (movieId) => {
-		this.quickSearchPromise(movieId)
+	chooseQuickSearch = (movie) => {
+		this.quickSearchPromise(movie)
 		this.quickSearchPromise = null
 	}
 
 	closeQuickSearch = () => {
 		this.quickSearchPromise(null)
 		this.quickSearchPromise = null
-	}
-
-	// SEARCH
-	fetchSearch = (searchQuery, type, pageNo) => {
-		return new Promise((resolve) => {
-			try {
-				axios
-					.get(BACKEND_URL + '/search', {
-						params: { searchQuery, type, pageNo },
-					})
-					.then(({ data }) => {
-						if (data) resolve(data)
-						else resolve(null)
-					})
-			} catch (err) {
-				console.error(err)
-				resolve(null)
-			}
-		})
-	}
-
-	// FILTERS
-	handleFilterChange = (key, val) => {
-		if (key === 'genres') {
-			if (this.filters.genres.includes(val)) {
-				const newGenres = this.filters.genres.filter((item) => item !== val)
-				this.filters = { ...this.filters, genres: newGenres }
-			} else this.filters.genres.push(val)
-		} else if (key === 'year-from') {
-			if (val > this.filters.year.to) return
-			this.filters.year.from = val
-		} else if (key === 'year-to') {
-			if (val < this.filters.year.from) return
-			this.filters.year.to = val
-		} else if (key === 'adult') {
-			this.filters.adult = !this.filters.adult
-		} else {
-			this.filters[key] = val
-		}
-		this.filtersChanged = true
-	}
-
-	applyFilters = () => {
-		this.appliedFilters = { ...this.filters }
-		this.filtersChanged = false
-	}
-
-	toggleFiltersActive = () => {
-		this.filtersActive = !this.filtersActive
-	}
-
-	resetFilter = () => {
-		this.filters = { ...defaultFilters }
-		this.appliedFilters = { ...defaultFilters }
 	}
 }
 

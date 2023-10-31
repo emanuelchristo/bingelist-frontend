@@ -1,6 +1,7 @@
 import { observer } from 'mobx-react-lite'
 import { dashboardStore } from '../../store/stores'
 import { useState, useEffect, useRef } from 'react'
+import EmojiPicker from 'emoji-picker-react'
 
 import Modal from '../common/Modal'
 import Button from '../common/Button'
@@ -16,6 +17,7 @@ import styles from './CreateListModal.module.css'
 const CreateList = observer(() => {
 	const [emoji, setEmoji] = useState('✏️')
 	const [title, setTitle] = useState('')
+	const [showEmojiPicker, setShowEmojiPicker] = useState(false)
 
 	const textBoxRef = useRef()
 
@@ -34,6 +36,7 @@ const CreateList = observer(() => {
 		if (dashboardStore.editListId) dashboardStore.cancelEditList()
 		else dashboardStore.cancelCreateList()
 
+		setShowEmojiPicker(false)
 		setEmoji('✏️')
 		setTitle('')
 	}
@@ -51,9 +54,26 @@ const CreateList = observer(() => {
 					<IconButton icon={<CloseSvg />} onClick={handleCancel} />
 				</div>
 				<div className={styles['content']}>
-					<div className={styles['emoji']}>
-						<input value={emoji} onChange={(e) => setEmoji(e.target.value)} />
+					<div className={styles['emoji-wrapper']} onClick={() => setShowEmojiPicker(true)}>
+						<span className={styles['emoji']}>{emoji}</span>
+						{/* <input value={emoji} onChange={(e) => setEmoji(e.target.value)} /> */}
+						{showEmojiPicker && (
+							<div className={styles['emoji-picker-wrapper']}>
+								<EmojiPicker
+									theme='dark'
+									previewConfig={{ showPreview: false }}
+									skinTonesDisabled={true}
+									width={300}
+									height={400}
+									onEmojiClick={(obj) => {
+										setEmoji(obj.emoji)
+										setShowEmojiPicker(false)
+									}}
+								/>
+							</div>
+						)}
 					</div>
+
 					<TextBox
 						icon={<TitleSvg />}
 						placeholder='Title'
@@ -70,7 +90,12 @@ const CreateList = observer(() => {
 				</div>
 				<div className={styles['buttons-wrapper']}>
 					<Button type='secondary' name='Cancel' onClick={handleCancel} />
-					<Button type='primary' name={dashboardStore.editListId ? 'Save' : 'Create'} onClick={handleOk} />
+					<Button
+						type='primary'
+						disabled={title.length === 0}
+						name={dashboardStore.editListId ? 'Save' : 'Create'}
+						onClick={handleOk}
+					/>
 				</div>
 			</div>
 		</Modal>

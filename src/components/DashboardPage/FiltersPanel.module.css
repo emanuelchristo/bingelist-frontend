@@ -30,6 +30,7 @@
 
 .inputs-container {
 	overflow-y: scroll;
+	flex: 1;
 }
 
 .inputs-wrapper {
@@ -116,4 +117,15 @@
 	opacity: 0.2;
 	overflow: hidden;
 	pointer-events: none;
+}
+
+.rating-icon {
+	height: 22px;
+}
+
+.loader-wrapper {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	flex: 1;
 }

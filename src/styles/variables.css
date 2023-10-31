@@ -1,11 +1,15 @@
 :root {
 	/* COLORS */
 	--app-bg: #040404;
-	--app-bg: linear-gradient(#0a0a0a, #131313);
+	--app-bg: linear-gradient(#121212, #000000);
 	/* --app-bg: linear-gradient(#0005ab, #00708c); */
 	--card-bg: radial-gradient(659.35% 100% at 50% 100%, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.04) 100%);
 	--light-bg: radial-gradient(53.03% 100% at 50% 100%, rgba(255, 255, 255, 0.12) 0%, rgba(255, 255, 255, 0.08) 100%);
-	--light-bg-active: radial-gradient(53.03% 100% at 50% 100%, rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0.09) 100%);
+	--light-bg-active: radial-gradient(
+		53.03% 100% at 50% 100%,
+		rgba(255, 255, 255, 0.2) 0%,
+		rgba(255, 255, 255, 0.09) 100%
+	);
 	--text-bright-active: rgba(255, 255, 255, 0.8);
 	--text-bright: rgba(255, 255, 255, 0.96);
 	--text-light: rgba(255, 255, 255, 0.4);

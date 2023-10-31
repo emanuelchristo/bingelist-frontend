@@ -58,7 +58,7 @@ const QuickSearch = observer(() => {
 		else if (key === 'Enter') {
 			if (results.length < 1) return
 			const item = results[selectedIndex]
-			dashboardStore.chooseQuickSearch({ id: item.id, media_type: item.media_type })
+			dashboardStore.chooseQuickSearch(item)
 		}
 	}
 
@@ -96,7 +96,7 @@ const QuickSearch = observer(() => {
 									key={item.media_type + item.id}
 									data={item}
 									selected={selectedIndex === index}
-									onClick={() => dashboardStore.chooseQuickSearch({ id: item.id, media_type: item.media_type })}
+									onClick={() => dashboardStore.chooseQuickSearch(item)}
 								/>
 							))}
 						</>

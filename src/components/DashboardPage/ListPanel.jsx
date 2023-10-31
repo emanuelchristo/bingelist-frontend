@@ -37,7 +37,9 @@ const ListPanel = observer(() => {
 	}
 
 	function handleAddMovie() {
-		dashboardStore.getQuickSearch().then((movieId) => {})
+		dashboardStore.quickSearch().then((movie) => {
+			dashboardStore.addOneMovieToList(movie, listId)
+		})
 	}
 
 	useEffect(() => {

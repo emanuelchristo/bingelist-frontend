@@ -19,6 +19,7 @@ import styles from './DashboardPage.module.css'
 const DashboardPage = observer(() => {
 	useEffect(() => {
 		dashboardStore.fetchLists()
+		dashboardStore.fetchFilterSettings()
 	}, [])
 
 	return (

@@ -12,10 +12,12 @@ const MovieGridItem = observer(({ data, inList }) => {
 	return (
 		<div className={styles['movie-grid-item']}>
 			<div
-				className={styles['poster']}
-				style={{ backgroundImage: `url('${data?.poster_path}')` }}
+				className={styles['poster-wrapper']}
 				onClick={() => dashboardStore.showMovieModal({ id: data?.id, media_type: data?.media_type })}
-			></div>
+			>
+				<div className={styles['poster-glow']} style={{ backgroundImage: `url('${data?.poster_path}')` }}></div>
+				<div className={styles['poster']} style={{ backgroundImage: `url('${data?.poster_path}')` }}></div>
+			</div>
 			<div className={styles['content']}>
 				<div className={styles['controls']}>
 					<div className={styles['controls-left']}>
