@@ -45,6 +45,11 @@ export function langCodeToName(code) {
 	return LANGUAGES_LIST[code]?.name ?? null
 }
 
+export function formatYear(realeaseDate) {
+	if (!realeaseDate) return '--'
+	return realeaseDate.slice(0, 4)
+}
+
 const LANGUAGES_LIST = {
 	aa: {
 		name: 'Afar',

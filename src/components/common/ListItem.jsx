@@ -35,7 +35,7 @@ export default function ListItem({
 			ref={itemRef}
 		>
 			<div className={styles['emoji-wrapper']}>
-				<span>{emoji}</span>
+				<span>{emoji ?? '❌'}</span>
 			</div>
 			<div className={styles['text-wrapper']}>
 				<span className={styles['name']}>{name}</span>

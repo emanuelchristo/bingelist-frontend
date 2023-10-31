@@ -41,7 +41,7 @@
 	width: 54px;
 	background: var(--light-bg);
 	border-radius: var(--radius-sm);
-	background-image: url('/bluebeetle.jpeg');
+	background-color: var(--image-bg);
 	background-size: cover;
 	background-position: center;
 	position: relative;

@@ -1,6 +1,7 @@
+import { formatMediaType, formatYear } from '../../utils/movie-format'
 import { useState, useEffect, useRef } from 'react'
-import { observer } from 'mobx-react-lite'
 import { dashboardStore } from '../../store/stores'
+import { observer } from 'mobx-react-lite'
 
 import Modal from '../common/Modal'
 import TextBox from '../common/TextBox'
@@ -92,6 +93,7 @@ const QuickSearch = observer(() => {
 							{results.map((item, index) => (
 								<MovieItem
 									key={item.media_type + item.id}
+									data={item}
 									selected={selectedIndex === index}
 									onClick={() => dashboardStore.chooseQuickSearch({ id: item.id, media_type: item.media_type })}
 								/>
@@ -110,16 +112,16 @@ const QuickSearch = observer(() => {
 
 export default QuickSearch
 
-function MovieItem({ onClick, selected }) {
+function MovieItem({ data, onClick, selected }) {
 	return (
 		<div className={`${styles['movie-item']} ${selected ? styles['selected'] : ''}`} onClick={onClick}>
-			<div className={styles['poster']}></div>
+			<div className={styles['poster']} style={{ backgroundImage: `url('${data?.poster_path}')` }}></div>
 			<div className={styles['text-wrapper']}>
-				<span className={styles['movie-title']}>Spider-Man: No Way Home</span>
+				<span className={styles['movie-title']}>{data?.title ?? '--'}</span>
 				<div className={styles['infos-wrapper']}>
-					<div className={styles['tag']}>Movie</div>
+					<div className={styles['tag']}>{formatMediaType(data?.media_type)}</div>
 					<div className={styles['dot']}></div>
-					<div className={styles['year']}>2023</div>
+					<div className={styles['year']}>{formatYear(data?.release_date)}</div>
 				</div>
 			</div>
 		</div>

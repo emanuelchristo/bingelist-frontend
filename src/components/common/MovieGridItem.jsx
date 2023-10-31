@@ -1,4 +1,4 @@
-import { formatMediaType, formatRating } from '../../utils/movie-format'
+import { formatMediaType, formatRating, formatYear } from '../../utils/movie-format'
 import { observer } from 'mobx-react-lite'
 import { dashboardStore } from '../../store/stores'
 
@@ -32,10 +32,7 @@ const MovieGridItem = observer(({ data, inList }) => {
 							onClick={() => dashboardStore.watchedMovie({ id: data?.id, media_type: data?.media_type })}
 						/>
 					</div>
-					<div
-						className={styles['playlist-button']}
-						onClick={() => dashboardStore.addToList({ id: data?.id, media_type: data?.media_type })}
-					>
+					<div className={styles['playlist-button']} onClick={() => dashboardStore.addToList(data)}>
 						{!!inList && <ListRemoveSvg className={styles['playlist-icon']} />}
 						{!inList && <ListAddSvg className={styles['playlist-icon']} />}
 					</div>
@@ -45,7 +42,7 @@ const MovieGridItem = observer(({ data, inList }) => {
 					onClick={() => dashboardStore.handleMovieClick({ id: data?.id, media_type: data?.media_type })}
 				>
 					<span className={styles['title']}>{data?.title ?? '--'}</span>
-					<span className={styles['year']}>{data?.release_date?.slice(0, 4) || '--'}</span>
+					<span className={styles['year']}>{formatYear(data?.release_date)}</span>
 					<div className='flex items-center gap-[6px]'>
 						<div className={styles['tag']}>{formatMediaType(data?.media_type)}</div>
 						<div className={styles['dot']}></div>

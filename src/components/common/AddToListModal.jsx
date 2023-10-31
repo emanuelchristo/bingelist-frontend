@@ -33,7 +33,7 @@ const AddToListModal = observer(() => {
 									name={item.name}
 									count={item.count}
 									noHoverAnim
-									selected={dashboardStore.movieLists.listsState[item.listId]}
+									selected={dashboardStore.newListsState[item.listId]}
 								/>
 							))}
 						</div>

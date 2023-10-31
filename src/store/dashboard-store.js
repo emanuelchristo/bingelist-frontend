@@ -59,8 +59,9 @@ class DashboardStore {
 	deleteListState = 'none'
 
 	showAddToListModal = false
-	addToListMovieId = null
+	addToListMovie = null
 	movieLists = { fetchState: 'none', listsState: {} }
+	newListsState = {}
 	addToListState = 'none'
 
 	listDetails = null
@@ -152,10 +153,12 @@ class DashboardStore {
 			this.listDetailsState = 'loading'
 			this.listDetails = null
 
-			const { data } = await axios.get(BACKEND_URL + '/list_details', { params: { listId: listId } })
-			console.log(data.movies.length)
+			const { data } = await axios.get(BACKEND_URL + '/list_details', {
+				params: { listId: listId },
+				headers: genAuthHeaders(),
+			})
 
-			console.log('here')
+			this.updateMovieWaFa(data.movies)
 
 			this.listDetailsState = 'success'
 			this.listDetails = data
@@ -203,7 +206,7 @@ class DashboardStore {
 			this.createListState = 'none'
 			this.showCreateList = false
 
-			window.location = '/dashboard/list/' + data.listId
+			// window.location = '/dashboard/list/' + data.listId
 		} catch (err) {
 			console.error('Failed to create list')
 			this.createListState = 'error'
@@ -282,47 +285,157 @@ class DashboardStore {
 	}
 
 	/* Add to list */
-	addToList = async (movieId) => {
+	addToList = async (movie) => {
 		try {
 			this.showAddToListModal = true
-			this.addToListMovieId = movieId
+			this.addToListMovie = movie
 			this.movieLists = { fetchState: 'loading', listsState: {} }
 
-			const { data } = await axios(BACKEND_URL + '/get_movie_lists', { params: { ...movieId } })
+			const { data } = await axios(BACKEND_URL + '/get_movie_lists', {
+				params: { id: movie.id, media_type: movie.media_type },
+				headers: genAuthHeaders(),
+			})
 
 			this.movieLists = { fetchState: 'success', listsState: data }
+			this.newListsState = data
 		} catch (err) {
 			this.movieLists = { fetchState: 'error', listsState: {} }
+			this.newListsState = {}
 			console.error('Failed to fetch lists movie is in')
 		}
 	}
 
 	cancelAddToList = () => {
-		this.addToListMovieId = null
+		this.addToListMovie = null
 		this.showAddToListModal = false
 		this.movieLists = { fetchState: 'none', listsState: {} }
+		this.newListsState = {}
 	}
 
 	toggleListInclude = (listId) => {
-		console.log(listId)
-		this.movieLists.listsState[listId] = !this.movieLists.listsState[listId]
+		this.newListsState[listId] = !this.newListsState[listId]
 	}
 
 	okAddToList = async () => {
 		try {
 			this.addToListState = 'loading'
 
-			await axios.post(BACKEND_URL + '/add_movie_list', this.movieLists.listsState, {
-				params: { ...this.addToListMovieId },
+			await axios.post(BACKEND_URL + '/add_movie_list', this.newListsState, {
+				params: { id: this.addToListMovie.id, media_type: this.addToListMovie.media_type },
+				headers: genAuthHeaders(),
 			})
 
+			/* Update list views */
+			for (let key in this.newListsState) {
+				let action
+				if (this.movieLists.listsState[key] === true && this.newListsState[key] === false) action = 'remove'
+				else if (this.movieLists.listsState[key] === false && this.newListsState[key] === true) action = 'add'
+				else continue
+
+				this.lists.yourLists.find((item) => item.listId === key).count += action === 'remove' ? -1 : 1
+
+				this.addOrRemoveFromDisplayedList(this.addToListMovie, key, action)
+			}
+
 			this.addToListState = 'success'
-			this.addToListMovieId = null
+			this.addToListMovie = null
 			this.showAddToListModal = false
 			this.movieLists = { fetchState: 'none', listsState: {} }
+			this.newListsState = {}
 		} catch (err) {
 			console.error('Failed to update add to list')
 			this.addToListState = 'error'
+		}
+	}
+
+	addOrRemoveFromDisplayedList = (movie, listId, action) => {
+		if (!this.listDetails || this.listDetails.listId !== listId) return
+
+		if (action === 'remove') {
+			const temp = this.listDetails.movies.filter((item) => {
+				return !(item.id === movie.id && item.media_type === movie.media_type)
+			})
+			this.listDetails.movies = temp
+		} else if (action === 'add') {
+			this.listDetails.movies.push(movie)
+		}
+	}
+
+	/* WATCHED FAVED */
+	updateMovieWaFa = async (movieList) => {
+		try {
+			const movieIds = movieList.map((item) => {
+				return { id: item.id, media_type: item.media_type }
+			})
+
+			const { data } = await axios.post(
+				BACKEND_URL + '/watched_or_faved',
+				{
+					movieList: movieIds,
+				},
+				{ headers: genAuthHeaders() }
+			)
+
+			this.waFaStatus = { ...this.waFaStatus, ...data }
+		} catch (err) {
+			console.log(err)
+			console.error('Failed to update watched faved status')
+		}
+	}
+
+	getMovieWaFa = (movieId) => {
+		const key = movieId.media_type + '_' + movieId.id
+		return this.waFaStatus[key] ?? null
+	}
+
+	favMovie = async (movie) => {
+		try {
+			const { data } = await axios.post(BACKEND_URL + '/add_to_favlist', null, {
+				params: {
+					id: movie.id,
+					media_type: movie.media_type,
+				},
+				headers: genAuthHeaders(),
+			})
+
+			const finalStatus = data[Object.keys(data)[0]].faved
+			if (finalStatus === true) {
+				this.lists.favourites.count += 1
+				this.addOrRemoveFromDisplayedList(movie, this.user.fav_lid, 'add')
+			} else {
+				this.lists.favourites.count -= 1
+				this.addOrRemoveFromDisplayedList(movie, this.user.fav_lid, 'remove')
+			}
+
+			this.waFaStatus = { ...this.waFaStatus, ...data }
+		} catch (err) {
+			console.error('Failed to favourite')
+		}
+	}
+
+	watchedMovie = async (movie) => {
+		try {
+			const { data } = await axios.post(BACKEND_URL + '/add_to_watchlist', null, {
+				params: {
+					id: movie.id,
+					media_type: movie.media_type,
+				},
+				headers: genAuthHeaders(),
+			})
+
+			const finalStatus = data[Object.keys(data)[0]].watched
+			if (finalStatus === true) {
+				this.lists.watched.count += 1
+				this.addOrRemoveFromDisplayedList(movie, this.user.watch_lid, 'add')
+			} else {
+				this.lists.watched.count -= 1
+				this.addOrRemoveFromDisplayedList(movie, this.user.watch_lid, 'remove')
+			}
+
+			this.waFaStatus = { ...this.waFaStatus, ...data }
+		} catch (err) {
+			console.log(err)
+			console.error('Failed to mark movie as watched')
 		}
 	}
 
@@ -347,56 +460,6 @@ class DashboardStore {
 		} catch (err) {
 			console.error('Failed to fetch discover')
 			this.discover = { ...defaults.discover, fetchState: 'error' }
-		}
-	}
-
-	/* WATCHED FAVED */
-	updateMovieWaFa = async (movieList) => {
-		try {
-			const movieIds = movieList.map((item) => {
-				return { id: item.id, media_type: item.media_type }
-			})
-
-			const { data } = await axios.post(BACKEND_URL + '/watched_or_faved', {
-				movieList: movieIds,
-			})
-
-			this.waFaStatus = { ...this.waFaStatus, ...data }
-		} catch (err) {
-			console.error('Failed to update watched faved status')
-		}
-	}
-
-	getMovieWaFa = (movieId) => {
-		const key = movieId.media_type + '_' + movieId.id
-		return this.waFaStatus[key] ?? null
-	}
-
-	favMovie = async (movieId) => {
-		try {
-			const { data } = await axios.post(BACKEND_URL + '/add_to_favlist', null, {
-				params: {
-					...movieId,
-				},
-			})
-
-			this.waFaStatus = { ...this.waFaStatus, ...data }
-		} catch (err) {
-			console.error('Failed to favourite')
-		}
-	}
-
-	watchedMovie = async (movieId) => {
-		try {
-			const { data } = await axios.post(BACKEND_URL + '/add_to_watchlist', null, {
-				params: {
-					...movieId,
-				},
-			})
-
-			this.waFaStatus = { ...this.waFaStatus, ...data }
-		} catch (err) {
-			console.error('Failed to mark movie as watched')
 		}
 	}
 
@@ -462,7 +525,6 @@ class DashboardStore {
 			axios
 				.post(BACKEND_URL + '/sign_in', null, { headers: genAuthHeaders() })
 				.then(({ data }) => {
-					console.log(data)
 					this.user = data
 					if (!inDashboard) window.location = '/dashboard/discover'
 				})
@@ -484,8 +546,8 @@ class DashboardStore {
 	fetchQuickSearch = (query) => {
 		return new Promise(async (resolve) => {
 			try {
-				// const { data } = await axios.get(BACKEND_URL + '/quick_search', { params: { query: query } })
-				setTimeout(() => resolve([]), 500)
+				const { data } = await axios.get(BACKEND_URL + '/quick_search', { params: { query: query } })
+				resolve(data)
 			} catch (err) {
 				console.error('Failed to fetch quick search')
 				resolve([])

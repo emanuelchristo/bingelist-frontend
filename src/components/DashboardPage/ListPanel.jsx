@@ -56,20 +56,25 @@ const ListPanel = observer(() => {
 									dashboardStore.listDetails?.count == 1 ? 'item' : 'items'
 								}`}</span>
 							</div>
-							<div className={styles['more-container']}>
-								<IconButton icon={<MoreSvg />} onClick={() => setShowMoreMenu(true)} />
-								<div className={styles['more-menu-wrapper']}>
-									<ContextMenu
-										options={[
-											{ icon: <DeleteSvg />, name: 'Delete', value: 'delete' },
-											{ icon: <EditSvg />, name: 'Edit', value: 'edit' },
-										]}
-										show={showMoreMenu}
-										onClick={handleMenuClick}
-										onClose={() => setShowMoreMenu(false)}
-									/>
+							{!(
+								dashboardStore.listDetails?.listId === dashboardStore.user?.fav_lid ||
+								dashboardStore.listDetails?.listId === dashboardStore.user?.watch_lid
+							) && (
+								<div className={styles['more-container']}>
+									<IconButton icon={<MoreSvg />} onClick={() => setShowMoreMenu(true)} />
+									<div className={styles['more-menu-wrapper']}>
+										<ContextMenu
+											options={[
+												{ icon: <DeleteSvg />, name: 'Delete', value: 'delete' },
+												{ icon: <EditSvg />, name: 'Edit', value: 'edit' },
+											]}
+											show={showMoreMenu}
+											onClick={handleMenuClick}
+											onClose={() => setShowMoreMenu(false)}
+										/>
+									</div>
 								</div>
-							</div>
+							)}
 						</div>
 						<div className={styles['controls-wrapper']}>
 							<TextBox icon={<SearchSvg />} placeholder='Search...' clear={true} onChange={() => {}} />
