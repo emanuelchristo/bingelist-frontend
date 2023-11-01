@@ -1,27 +1,32 @@
 export const defaults = {
-	lists: {
-		fetchState: 'none',
-		favourites: null,
-		watched: null,
-		yourLists: [],
-	},
+  lists: {
+    fetchState: "none",
+    favourites: null,
+    watched: null,
+    yourLists: [],
+  },
 
-	discover: {
-		fetchState: 'none',
-		trending: [],
-		popular: { tv: [], movies: [] },
-		upcoming: { tv: [], movies: [] },
-	},
+  discover: {
+    fetchState: "none",
+    trending: [],
+    popular: { tv: [], movies: [] },
+    upcoming: { tv: [], movies: [] },
+  },
 
-	browse: {
-		fetchState: 'none',
-		movies: [],
-		currPage: 1,
-		totalPages: 1,
-	},
+  browse: {
+    fetchState: "none",
+    movies: [],
+    currPage: 1,
+    totalPages: 1,
+  },
 
-	movieDetails: {
-		fetchState: 'none',
-		details: null,
-	},
+  random: {
+    fetchState: "none",
+    movie: null,
+  },
+
+  movieDetails: {
+    fetchState: "none",
+    details: null,
+  },
 }

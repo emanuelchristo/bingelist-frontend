@@ -73,8 +73,87 @@ class DashboardStore {
   browseFiltersActive = true
   listFiltersActive = true
 
+  /* Similar */
+  similarReference = null
+  similarReferenceDetials = { fetchState: "none", details: {} }
+  similarMovies = { fetchState: "none", movies: [] }
+
+  /* Random */
+  random = { fetchState: "none", movie: null }
+
   constructor() {
     makeAutoObservable(this)
+  }
+
+  /* RANDOM */
+  fetchRandom = async () => {
+    try {
+      this.random.fetchState = "loading"
+
+      const { data } = await axios.post(BACKEND_URL + "/random", {
+        filters: this.randomFiltersActive ? this.appliedRandomFilters : null,
+      })
+
+      this.updateMovieWaFa([data])
+
+      this.random = {
+        movie: { ...data },
+        fetchState: "success",
+      }
+    } catch (err) {
+      this.random.fetchState = "error"
+      console.err("Failed to fetch random")
+    }
+  }
+
+  /* SIMILAR */
+  similarAddReference = (movie) => {
+    this.similarReference = movie
+
+    this.similarReferenceDetials = { fetchState: "loading", details: null }
+
+    axios
+      .get(BACKEND_URL + "/movie_details", {
+        params: { id: movie.id, media_type: movie.media_type },
+        headers: genAuthHeaders(),
+      })
+      .then(({ data }) => {
+        if (this.similarReference)
+          this.similarReferenceDetials = {
+            fetchState: "success",
+            details: data,
+          }
+      })
+      .catch((err) => {
+        console.error("Failed to fetch similar reference details")
+        this.similarReferenceDetials = { fetchState: "error", details: null }
+      })
+
+    this.fetchSimilarMovies()
+  }
+
+  similarRemoveReference = () => {
+    this.similarReference = null
+    this.similarMovies = { fetchState: "none", movies: [] }
+  }
+
+  fetchSimilarMovies = async () => {
+    try {
+      this.similarMovies.fetchState = "loading"
+
+      const { data } = await axios.get(BACKEND_URL + "/similar", {
+        params: {
+          id: this.similarReference?.id,
+          media_type: this.similarReference?.media_type,
+        },
+      })
+
+      if (this.similarReference)
+        this.similarMovies = { fetchState: "success", movies: data }
+    } catch (err) {
+      console.error("Failed to fetch similar movies")
+      this.similarMovies = { fetchState: "error", movies: [] }
+    }
   }
 
   /* FILTERS */
@@ -114,9 +193,11 @@ class DashboardStore {
       this.browse = defaults.browse
       this.fetchBrowse()
       console.log("Fetching browse")
-    } else if (page === "random")
+    } else if (page === "random") {
       this.randomFiltersActive = !this.randomFiltersActive
-    else if (page === "list") this.listFiltersActive = !this.listFiltersActive
+      this.random = defaults.random
+      this.fetchRandom()
+    } else if (page === "list") this.listFiltersActive = !this.listFiltersActive
   }
 
   applyFilters = (page) => {
@@ -124,9 +205,11 @@ class DashboardStore {
       this.appliedBrowseFilters = JSON.parse(JSON.stringify(this.currFilters))
       this.browse = defaults.browse
       this.fetchBrowse()
-    } else if (page === "random")
+    } else if (page === "random") {
       this.appliedRandomFilters = JSON.parse(JSON.stringify(this.currFilters))
-    else if (page === "list")
+      this.random = defaults.random
+      this.fetchRandom()
+    } else if (page === "list")
       this.appliedListFilters = JSON.parse(JSON.stringify(this.currFilters))
 
     this.filtersChanged = false
@@ -137,11 +220,14 @@ class DashboardStore {
       const temp = JSON.stringify(this.filtersConfig.browse.defaultFilters)
       this.appliedBrowseFilters = JSON.parse(temp)
       this.currFilters = JSON.parse(temp)
+      this.browse = defaults.browse
       this.fetchBrowse()
     } else if (page === "random") {
       const temp = JSON.stringify(this.filtersConfig.random.defaultFilters)
       this.appliedRandomFilters = JSON.parse(temp)
       this.currFilters = JSON.parse(temp)
+      this.random = defaults.random
+      this.fetchRandom()
     } else if (page === "list") {
       const temp = JSON.stringify(this.filtersConfig.list.defaultFilters)
       this.appliedListFilters = JSON.parse(temp)

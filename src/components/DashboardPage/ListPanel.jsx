@@ -100,6 +100,23 @@ const ListPanel = observer(() => {
 
     const extracted = results.map((item) => item.original)
 
+    const sort = dashboardStore.appliedListFilters?.sort
+
+    if (sort === "popularity.desc") {
+      extracted.sort((a, b) => {
+        return a.popularity < b.popularity ? 1 : -1
+      })
+    } else if (sort === "primary_release_date.desc") {
+      extracted.sort((a, b) => {
+        return b.release_date.localeCompare(a.release_date)
+      })
+    } else if (sort === "last-added") {
+      extracted.sort((a, b) => {
+        return b.added_at.localeCompare(a.added_at)
+      })
+      extracted.forEach((item) => console.log(item.added_at))
+    }
+
     setDisplayedMovies(extracted)
   }, [
     dashboardStore.listDetails,
