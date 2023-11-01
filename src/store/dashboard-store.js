@@ -388,7 +388,17 @@ class DashboardStore {
         headers: genAuthHeaders(),
       })
 
-      this.lists.yourLists.find((item) => item.listId === listId).count += 1
+      this.updateMovieWaFa([movie])
+
+      let currList
+      currList = this.lists.yourLists.find((item) => item.listId === listId)
+      if (!currList) {
+        if (this.user.fav_lid === listId) currList = this.lists.favourites
+        else if (this.user.watch_lid === listId) currList = this.lists.watched
+      }
+
+      currList.count += 1
+
       this.addOrRemoveFromDisplayedList(movie, listId, "add")
     } catch (err) {
       console.error("Failed to add one movie to list")
