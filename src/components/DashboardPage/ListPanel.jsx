@@ -119,16 +119,18 @@ const ListPanel = observer(() => {
           <div className={styles["header"]}>
             <div className={styles["list-heading"]}>
               <div className={styles["emoji-wrapper"]}>
-                <span>{dashboardStore.listDetails?.emoji ?? "❌"}</span>
+                <span>{dashboardStore.getListById(listId)?.emoji ?? "❌"}</span>
               </div>
               <div className={styles["text-wrapper"]}>
                 <span className={styles["name"]}>
-                  {dashboardStore.listDetails?.name ?? "--"}
+                  {dashboardStore.getListById(listId)?.name ?? "--"}
                 </span>
                 <span className={styles["count"]}>{`${
-                  dashboardStore.listDetails?.count ?? "--"
+                  dashboardStore.getListById(listId)?.count ?? "--"
                 } ${
-                  dashboardStore.listDetails?.count == 1 ? "item" : "items"
+                  dashboardStore.getListById(listId)?.count === 1
+                    ? "item"
+                    : "items"
                 }`}</span>
               </div>
               {!(
