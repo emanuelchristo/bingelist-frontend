@@ -49,10 +49,21 @@ const ListPanel = observer(() => {
 
     if (filters.adult === false && movie.adult === true) return false
 
-    if (filters.duration.min !== "any" && movie.duration < filters.duration.min)
-      return false
-    if (filters.duration.max !== "any" && movie.duration > filters.duration.max)
-      return false
+    if (filters.duration !== "any") {
+      try {
+        const duration = JSON.parse(filters.duration)
+        if (duration.max !== "any" && movie.duration > duration.max)
+          return false
+        if (duration.min !== "any" && movie.duration < duration.min)
+          return false
+
+        if (
+          (duration.max !== "any" || duration.min !== "any") &&
+          isNaN(parseInt(movie.duration))
+        )
+          return false
+      } catch (err) {}
+    }
 
     if (filters.language !== "any" && movie.language !== filters.language)
       return false
@@ -114,7 +125,6 @@ const ListPanel = observer(() => {
       extracted.sort((a, b) => {
         return b.added_at.localeCompare(a.added_at)
       })
-      extracted.forEach((item) => console.log(item.added_at))
     }
 
     setDisplayedMovies(extracted)

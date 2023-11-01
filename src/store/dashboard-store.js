@@ -2,7 +2,7 @@ import { makeAutoObservable } from "mobx"
 import { defaults } from "./default-states"
 import axios from "axios"
 
-const BACKEND_URL = import.meta.env.VITE_BACKEND_URL
+const BACKEND_URL = "http://localhost:5000"
 
 function genAuthHeaders() {
   const jwt = window.localStorage.getItem("jwt")
@@ -174,10 +174,15 @@ class DashboardStore {
         this.currFilters = { ...this.currFilters, genres: newGenres }
       } else this.currFilters.genres.push(val)
     } else if (key === "year-from") {
-      if (val > this.currFilters.yearTo) return
+      if (this.currFilters.yearTo !== "any" && val > this.currFilters.yearTo)
+        return
       this.currFilters.yearFrom = val
     } else if (key === "year-to") {
-      if (val < this.currFilters.yearFrom) return
+      if (
+        this.currFilters.yearFrom !== "any" &&
+        val < this.currFilters.yearFrom
+      )
+        return
       this.currFilters.yearTo = val
     } else if (key === "adult") {
       this.currFilters.adult = !this.currFilters.adult
