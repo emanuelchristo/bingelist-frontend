@@ -5,10 +5,12 @@ import { dashboardStore } from '../store/stores'
 
 import styles from './LandingPage.module.css'
 
+const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID
+
 export default function LandingPage() {
 	useEffect(() => {
 		google.accounts.id.initialize({
-			client_id: import.meta.env.VITE_GOOGLE_CLIENT_ID,
+			client_id: GOOGLE_CLIENT_ID,
 			callback: dashboardStore.handleGoogleLogin,
 		})
 
