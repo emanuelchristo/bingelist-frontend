@@ -8,7 +8,7 @@ import styles from './LandingPage.module.css'
 export default function LandingPage() {
 	useEffect(() => {
 		google.accounts.id.initialize({
-			client_id: '524308456980-3d17hpn4h6qhdnn32oap5q52uta8gbsa.apps.googleusercontent.com',
+			client_id: import.meta.env.VITE_GOOGLE_CLIENT_ID,
 			callback: dashboardStore.handleGoogleLogin,
 		})
 

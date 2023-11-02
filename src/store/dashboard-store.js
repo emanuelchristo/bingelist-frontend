@@ -2,7 +2,7 @@ import { makeAutoObservable } from "mobx"
 import { defaults } from "./default-states"
 import axios from "axios"
 
-const BACKEND_URL = "http://localhost:5000"
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL
 
 function genAuthHeaders() {
   const jwt = window.localStorage.getItem("jwt")
