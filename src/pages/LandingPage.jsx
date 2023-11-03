@@ -23,7 +23,7 @@ export default function LandingPage() {
 	return (
 		<div className={styles['landing-page']}>
 			<nav className={styles['nav']}>
-				<img src='/logo.svg' className={styles['logo']} />
+				<img src='/logo.png' className={styles['logo']} />
 				{/* <div className={styles['nav-button-wrapper']} >
 					<Button type='primary' name='Sign in' />
 				</div> */}
@@ -37,7 +37,7 @@ export default function LandingPage() {
 							{/* <Button type='primary' name='Sign in'  /> */}
 						</div>
 					</div>
-					<img className={styles['hero-image']} src='/images/hero-image.png' />
+					<img className={styles['hero-image']} src='/images/hero-image.webp' />
 				</div>
 			</div>
 		</div>
