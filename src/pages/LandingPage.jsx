@@ -9,7 +9,7 @@ const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID
 
 export default function LandingPage() {
 	useEffect(() => {
-		if (!google) return
+		if (typeof google !== 'undefined') return
 
 		google.accounts.id.initialize({
 			client_id: GOOGLE_CLIENT_ID,
