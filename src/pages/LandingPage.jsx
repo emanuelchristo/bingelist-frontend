@@ -9,8 +9,7 @@ const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID
 
 export default function LandingPage() {
 	useEffect(() => {
-		if (typeof google !== 'undefined') return
-
+		if (typeof google == 'undefined') return
 		google.accounts.id.initialize({
 			client_id: GOOGLE_CLIENT_ID,
 			callback: dashboardStore.handleGoogleLogin,
@@ -20,7 +19,7 @@ export default function LandingPage() {
 			document.getElementById('google-sign-in-button-div'),
 			{ theme: 'outline', size: 'large' } // customization attributes
 		)
-	}, [google])
+	}, [])
 
 	return (
 		<div className={styles['landing-page']}>
