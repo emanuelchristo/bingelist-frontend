@@ -34,11 +34,11 @@ const TextBox = forwardRef(
 						onKeyDown={onKeyDown}
 						ref={ref}
 					/>
-					{!!clear && (
+					{/* {!!clear && (
 						<div className={styles['select-chevron-wrapper']} onClick={onClear}>
 							<CloseSvg />
 						</div>
-					)}
+					)} */}
 				</div>
 			</div>
 		)

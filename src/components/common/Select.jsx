@@ -8,7 +8,7 @@ export default function Select({ icon, options, label, selected, onChange = () =
 			{!!label && <span className={styles['label']}>{label}</span>}
 			<div className={styles['select']} aria-label='select'>
 				{!!icon && <div className={styles['icon-wrapper']}>{icon}</div>}
-				<select value={selected} onChange={onChange}>
+				<select className={styles['select-el']} value={selected} onChange={onChange}>
 					{options.map((item, index) => (
 						<option key={`${item}${index}`} value={item.value}>
 							{item.name}

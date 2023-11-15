@@ -42,12 +42,14 @@
 .select {
 	display: flex;
 	align-items: center;
+	justify-content: space-between;
 	height: var(--input-height);
 	border-radius: var(--radius-sm);
 	background: var(--light-bg);
 	overflow: hidden;
-	padding: 0 var(--spacing-sm);
+	padding-left: var(--spacing-sm);
 	padding-left: var(--spacing-md);
+	position: relative;
 }
 
 .select:active {
@@ -92,6 +94,9 @@
 .select-chevron-wrapper {
 	display: grid;
 	place-content: center;
+	position: absolute;
+	right: 6px;
+	pointer-events: none;
 }
 
 .select-chevron-wrapper svg {
